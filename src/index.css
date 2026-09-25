@@ -161,7 +161,7 @@ input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
 
 input, button, select, textarea {
-  -webkit-appearance: none;
+  appearance: none;
   touch-action: manipulation;
   font-family: var(--font);
   max-width: 100%;
