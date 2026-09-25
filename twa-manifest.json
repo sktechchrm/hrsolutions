@@ -1,0 +1,63 @@
+{
+  "packageId": "com.sktechchrm.calculator",
+  "host": "sktechchrm.github.io",
+  "name": "Mario Calculator",
+  "launcherName": "Mario Calc",
+  "display": "standalone",
+  "themeColor": "#667EEA",
+  "themeColorDark": "#000000",
+  "navigationColor": "#000000",
+  "navigationColorDark": "#000000",
+  "navigationDividerColor": "#000000",
+  "navigationDividerColorDark": "#000000",
+  "backgroundColor": "#F0F4FF",
+  "enableNotifications": true,
+  "startUrl": "/calculator/",
+  "iconUrl": "https://sktechchrm.github.io/calculator/icons/icon-512.png",
+  "maskableIconUrl": "https://sktechchrm.github.io/calculator/icons/icon-512.png",
+  "splashScreenFadeOutDuration": 300,
+  "signingKey": {
+    "path": "E:\\Android\\calculator-android\\android.keystore",
+    "alias": "android"
+  },
+  "appVersionName": "11",
+  "appVersionCode": 11,
+  "shortcuts": [
+    {
+      "name": "General Calculator",
+      "shortName": "সাধারণ",
+      "url": "https://sktechchrm.github.io/calculator/",
+      "chosenIconUrl": "https://sktechchrm.github.io/calculator/icons/icon-192.png"
+    },
+    {
+      "name": "EMI Calculator",
+      "shortName": "ইএমআই",
+      "url": "https://sktechchrm.github.io/calculator/",
+      "chosenIconUrl": "https://sktechchrm.github.io/calculator/icons/icon-192.png"
+    }
+  ],
+  "generatorApp": "bubblewrap-cli",
+  "webManifestUrl": "https://sktechchrm.github.io/calculator/manifest.json",
+  "fallbackType": "customtabs",
+  "features": {},
+  "alphaDependencies": {
+    "enabled": false
+  },
+  "enableSiteSettingsShortcut": true,
+  "isChromeOSOnly": false,
+  "isMetaQuest": false,
+  "fullScopeUrl": "https://sktechchrm.github.io/calculator/",
+  "minSdkVersion": 21,
+  "orientation": "portrait-primary",
+  "fingerprints": [],
+  "additionalTrustedOrigins": [],
+  "retainedBundles": [],
+  "protocolHandlers": [],
+  "fileHandlers": [],
+  "launchHandlerClientMode": "",
+  "displayOverride": [
+    "standalone",
+    "minimal-ui"
+  ],
+  "appVersion": "11"
+}

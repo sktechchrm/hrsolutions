@@ -1,0 +1,274 @@
+import { useState, useCallback } from 'react';
+import {
+  FaCalculator, FaUniversity, FaBirthdayCake, FaWeight,
+  FaFire, FaReceipt, FaChartLine, FaTshirt, FaRuler,
+  FaExchangeAlt, FaRulerCombined, FaMapMarkedAlt,
+  FaBalanceScale, FaQuestionCircle, FaPiggyBank, FaMosque, FaGavel, FaFileInvoiceDollar, FaBolt, FaBaby, FaFileContract, FaVideo, FaAppleAlt, FaGoogleDrive, FaIndustry,
+} from 'react-icons/fa';
+
+import { LangProvider, useLang } from './context/LangContext.tsx';
+import { ThemeProvider } from './context/ThemeContext.tsx';
+import { useHistory } from './hooks/useHistory.ts';
+import { APPS } from './utils/constants.ts';
+
+import HomeScreen from './components/HomeScreen.tsx';
+import Header     from './components/Header.tsx';
+import BottomNav  from './components/BottomNav.tsx';
+import SupportScreen from './components/SupportScreen.tsx';
+import CallScreen  from './components/CallScreen.tsx';
+
+import GeneralCalc    from './components/calculators/GeneralCalc.tsx';
+import EmiCalc        from './components/calculators/EmiCalc.tsx';
+import AgeCalc        from './components/calculators/AgeCalc.tsx';
+import BmiCalc        from './components/calculators/BmiCalc.tsx';
+import CalorieCalc    from './components/calculators/CalorieCalc.tsx';
+import VatCalc        from './components/calculators/VatCalc.tsx';
+import SmvCalc        from './components/calculators/SmvCalc.tsx';
+import GarmentsCalc   from './components/calculators/GarmentsCalc.tsx';
+import GarmentsPattern from './components/calculators/GarmentsPattern.tsx';
+import GSizeCalc      from './components/calculators/GSizeCalc.tsx';
+import UnitCalc       from './components/calculators/UnitCalc.tsx';
+import BdLandCalc     from './components/calculators/BdLandCalc.tsx';
+import BdWeightCalc   from './components/calculators/BdWeightCalc.tsx';
+import DepositCalc    from './components/calculators/DepositCalc.tsx';
+import ZakatCalc      from './components/calculators/ZakatCalc.tsx';
+import InheritanceCalc from './components/calculators/Inheritancecalc.tsx';
+import IncomeTaxCalc   from './components/calculators/Incometaxcalc.tsx';
+import UtilityCalc     from './components/calculators/Utilitycalc.tsx';
+import MaternityCalc  from './components/calculators/MaternityCalc.tsx';
+import FinalSettlementCalc from './components/calculators/FinalSettlementCalc.tsx';
+import DietChartCalc  from './components/calculators/DietChartCalc.tsx';
+import DriveShareCalc from './components/calculators/Drivesharecalc.tsx';
+import WagesGridCalc  from './components/calculators/Wagesgridcalc.tsx';
+
+const SCREENS: Record<string, React.ComponentType<any>> = {
+  general:  GeneralCalc,
+  emi:      EmiCalc,
+  age:      AgeCalc,
+  bmi:      BmiCalc,
+  calorie:  CalorieCalc,
+  vat:      VatCalc,
+  smv:      SmvCalc,
+  garments: GarmentsCalc,
+  gpattern: GarmentsPattern,
+  gsize:    GSizeCalc,
+  unit:     UnitCalc,
+  bdland:   BdLandCalc,
+  bdweight: BdWeightCalc,
+  deposit:  DepositCalc,
+  zakat:    ZakatCalc,
+  inheritance: InheritanceCalc,
+  incometax: IncomeTaxCalc,
+  utility:  UtilityCalc,
+  maternity: MaternityCalc,
+  finalsettlement: FinalSettlementCalc,
+  dietchart: DietChartCalc,
+  driveshare: DriveShareCalc,
+  wagesgrid: WagesGridCalc,
+  // 'call' is NOT registered here — it doesn't take CalcProps (no
+  // history/onAdd/onClear), so it's special-cased in AppInner below,
+  // the same way 'support' is.
+};
+
+const ICONS: Record<string, React.ComponentType<{ size?: number; color?: string }>> = {
+  FaCalculator, FaUniversity, FaBirthdayCake, FaWeight,
+  FaFire, FaReceipt, FaChartLine, FaTshirt, FaRuler,
+  FaExchangeAlt, FaRulerCombined, FaMapMarkedAlt, FaBalanceScale,
+  FaPiggyBank, FaMosque, FaGavel, FaFileInvoiceDollar, FaBolt, FaBaby, FaFileContract, FaVideo, FaAppleAlt, FaGoogleDrive, FaIndustry,
+};
+
+const APP_LABELS: Record<string, { en: string; bn: string }> = {
+  general:  { en: 'Calculator',   bn: 'ক্যালকুলেটর' },
+  emi:      { en: 'EMI Calc',     bn: 'ইএমআই' },
+  age:      { en: 'Age Calc',     bn: 'বয়স' },
+  bmi:      { en: 'BMI',          bn: 'বিএমআই' },
+  calorie:  { en: 'Calorie',      bn: 'ক্যালরি' },
+  vat:      { en: 'VAT',          bn: 'ভ্যাট' },
+  smv:      { en: 'Stock Market', bn: 'শেয়ার বাজার' },
+  garments: { en: 'Measurement',  bn: 'মেজারমেন্ট' },
+  gpattern: { en: 'Pattern',      bn: 'প্যাটার্ন' },
+  gsize:    { en: 'Size Chart',   bn: 'সাইজ চার্ট' },
+  unit:     { en: 'Unit Convert', bn: 'ইউনিট' },
+  bdland:   { en: 'Land',         bn: 'ভূমির মাপ' },
+  bdweight: { en: 'Goods Weight', bn: 'পণ্যের ওজন' },
+  deposit:  { en: 'Deposit',      bn: 'ডিপোজিট' },
+  zakat:    { en: 'Zakat',        bn: 'যাকাত' },
+  inheritance: { en: 'Property Distribution', bn: 'সম্পত্তি বণ্টন' },
+  incometax: { en: 'Income Tax', bn: 'আয়কর' },
+  utility:  { en: 'Utility Bill', bn: 'ইউটিলিটি বিল' },
+  maternity: { en: 'Maternity Benefit', bn: 'মাতৃত্ব সুবিধা' },
+  finalsettlement: { en: 'Final Settlement', bn: 'চূড়ান্ত পাওনা' },
+  call:     { en: 'Video Call',   bn: 'ভিডিও কল' },
+  dietchart:{ en: 'Diet Chart',   bn: 'ডায়েট চার্ট' },
+  driveshare: { en: 'Send File',  bn: 'ফাইল পাঠান' },
+  wagesgrid: { en: 'Wages Grid',  bn: 'ওয়েজেস গ্রিড' },
+  support:  { en: 'Support',      bn: 'সাপোর্ট' },
+};
+
+// One tooltip text per calculator — shown in Header ⓘ button
+const APP_INFO: Record<string, { en: string; bn: string }> = {
+  general:  { en: 'Use the keypad to enter numbers.\nPress operators (+, -, x, /) then = for result.',
+               bn: 'কীপ্যাড দিয়ে সংখ্যা দিন।\nঅপারেটর চাপুন তারপর = চাপুন।' },
+  emi:      { en: 'Enter loan amount, annual interest rate %, and tenure in years.\nPress Calculate.',
+               bn: 'ঋণের পরিমাণ, বার্ষিক সুদের হার ও মেয়াদ বছরে দিন।\nহিসাব চাপুন।' },
+  age:      { en: 'Enter your birth date (day / month / year).\nPress Calculate to see age and next birthday.',
+               bn: 'জন্ম তারিখ দিন (দিন / মাস / বছর)।\nহিসাব চাপুন — বয়স ও পরের জন্মদিন দেখুন।' },
+  bmi:      { en: 'Enter weight in kg and height in inches.\n5 feet 6 inches = 66 inches.\nPress Calculate.',
+               bn: 'ওজন কেজিতে ও উচ্চতা ইঞ্চিতে দিন।\n৫ ফুট ৬ ইঞ্চি = ৬৬ ইঞ্চি।\nহিসাব চাপুন।' },
+  calorie:  { en: 'Enter gender, age, weight (kg), height (inches) and activity level.\nPress Calculate for daily calorie needs.',
+               bn: 'লিঙ্গ, বয়স, ওজন, উচ্চতা ও কার্যকলাপ স্তর দিন।\nহিসাব চাপুন।' },
+  vat:      { en: 'Select BD or International mode.\nChoose Add or Remove VAT.\nEnter amount and rate, then Calculate.',
+               bn: 'BD বা আন্তর্জাতিক মোড বেছে নিন।\nVAT যোগ বা বিয়োগ মোড বেছে নিন।\nপরিমাণ ও হার দিয়ে হিসাব চাপুন।' },
+  smv:      { en: 'Enter number of shares, buy price, current price and brokerage %.\nPress Calculate for profit/loss.',
+               bn: 'শেয়ার সংখ্যা, ক্রয় মূল্য, বর্তমান মূল্য ও ব্রোকারেজ দিন।\nহিসাব চাপুন।' },
+  garments: { en: `Measuring Guide:
+- Stand straight
+- Keep tape snug against body
+- Chest: at fullest part of chest
+- Waist: at narrowest part of abdomen
+- Hip: at widest part
+- All measurements in inches
+- Press Calculate for recommended size.`,
+               bn: `মাপ নেওয়ার নিয়ম:
+- সোজা হয়ে দাঁড়ান
+- ফিতা শরীরের সাথে আটসাট রাখুন
+- বুকের মাপ: বুকের সবচেয়ে চওড়া অংশে
+- কোমরের মাপ: পেটের সবচেয়ে সরু অংশে
+- নিতম্বের মাপ: সবচেয়ে চওড়া অংশে
+- সব মাপ ইঞ্চিতে
+- হিসাব চাপুন।` },
+  gpattern: { en: 'Select garment type, enter all measurements in inches.\nPress Generate Pattern.\nA,B,C = measurement points. Add 0.5" seam allowance.',
+               bn: 'পোশাকের ধরন বেছে মাপ ইঞ্চিতে দিন।\nপ্যাটার্ন তৈরি চাপুন।\nA,B,C = মেজারমেন্ট পয়েন্ট। ০.৫" সেলাই ভাতা যোগ করুন।' },
+  gsize:    { en: 'Select gender and category (shirt / pants / shoes).\nFind your size across BD, US, UK, EU and Asia standards.',
+               bn: 'লিঙ্গ ও বিভাগ (শার্ট / প্যান্ট / জুতা) বেছে নিন।\nBD, US, UK, EU ও Asia সাইজ দেখুন।' },
+  unit:     { en: 'Select a category (length, weight, temperature, area, volume, speed).\nEnter value and choose units, then Calculate.',
+               bn: 'বিভাগ বেছে নিন (দৈর্ঘ্য, ওজন, তাপমাত্রা, ক্ষেত্রফল, আয়তন, গতি)।\nমান ও একক দিয়ে হিসাব চাপুন।' },
+  bdland:   { en: `BD Land Standards:
+1 Bigha = 3 Katha
+1 Katha = 20 Chattak
+1 Chattak = 45 sq ft
+1 Katha = 720 sq ft
+1 Bigha = 14,400 sq ft
+1 Decimal = 435.6 sq ft
+
+Enter value, select unit, press Convert.`,
+               bn: `বাংলাদেশ ভূমি মানদণ্ড:
+১ বিঘা = ৩ কাঠা
+১ কাঠা = ২০ ছটাক
+১ ছটাক = ৪৫ বর্গফুট
+১ কাঠা = ৭২০ বর্গফুট
+১ বিঘা = ১৪,৪০০ বর্গফুট
+১ শতাংশ = ৪৩৫.৬ বর্গফুট
+
+পরিমাণ দিন, একক বেছে নিন, রূপান্তর চাপুন।` },
+  bdweight: { en: 'Enter weight/quantity, select the unit (Maund, Seer, kg etc.).\nEnter price per kg, then Calculate total price.',
+               bn: 'ওজন দিন, একক বেছে নিন (মণ, সের, কেজি ইত্যাদি)।\nপ্রতি কেজি দাম দিয়ে হিসাব চাপুন।' },
+  deposit:  { en: 'Choose FDR (lump-sum) or DPS (monthly deposit).\nEnter amount, annual interest rate % and duration in years.\nPress Calculate for maturity amount.',
+               bn: 'এফডিআর (এককালীন) বা ডিপিএস (মাসিক জমা) বেছে নিন।\nপরিমাণ, বার্ষিক সুদের হার ও মেয়াদ বছরে দিন।\nহিসাব চাপুন — মেয়াদপূর্তির পরিমাণ দেখুন।' },
+  zakat:    { en: 'Choose Gold or Silver Nisab standard.\nEnter the current price per gram, your cash, gold, silver, business assets, and any debts.\nPress Calculate to see if Zakat is due and how much.',
+               bn: 'স্বর্ণ বা রৌপ্য নিসাব মান বেছে নিন।\nআজকের প্রতি গ্রাম দাম, নগদ, স্বর্ণ, রৌপ্য, ব্যবসায়িক সম্পদ ও ঋণ দিন।\nহিসাব চাপুন — যাকাত ফরজ কিনা ও কত তা দেখুন।' },
+  inheritance: { en: 'Select Muslim or Hindu law.\nEnter total property value and surviving family members (spouse, sons, daughters, parents).\nPress Calculate to see each heir\'s share per BD inheritance law.',
+               bn: 'মুসলিম বা হিন্দু আইন বেছে নিন।\nমোট সম্পত্তির মূল্য ও জীবিত পরিবারের সদস্য (স্ত্রী/স্বামী, ছেলে, মেয়ে, বাবা-মা) দিন।\nহিসাব চাপুন — প্রত্যেক ওয়ারিশের অংশ দেখুন।' },
+  incometax: { en: 'Select your taxpayer category and enter annual taxable income.\nOptionally enter eligible investment for rebate.\nPress Calculate to see slab-wise tax and net payable amount.',
+               bn: 'করদাতার শ্রেণী বেছে নিন ও বার্ষিক করযোগ্য আয় দিন।\nরিবেটের জন্য যোগ্য বিনিয়োগ (ঐচ্ছিক) দিন।\nহিসাব চাপুন — স্ল্যাব অনুযায়ী কর ও প্রদেয় পরিমাণ দেখুন।' },
+  utility: { en: 'Choose Electricity, Gas, or Water.\nEnter units consumed (or burner type for gas).\nPress Calculate to see the estimated bill breakdown.',
+             bn: 'বিদ্যুৎ, গ্যাস বা পানি বেছে নিন।\nব্যবহৃত ইউনিট (বা গ্যাসের জন্য চুলার ধরন) দিন।\nহিসাব চাপুন — আনুমানিক বিলের বিবরণ দেখুন।' },
+  maternity: { en: 'Enter your joining date and delivery date (day / month / year).\nEnter monthly wage and number of surviving children.\nPress Calculate to see leave schedule and benefit amount per BD Labour Act, Sec 46.',
+               bn: 'যোগদানের তারিখ ও প্রসবের তারিখ দিন (দিন / মাস / বছর)।\nমাসিক মজুরি ও জীবিত সন্তানের সংখ্যা দিন।\nহিসাব চাপুন — শ্রম আইন ধারা ৪৬ অনুযায়ী ছুটির সময়সূচি ও সুবিধা দেখুন।' },
+  finalsettlement: { en: 'Enter joining and last attendance dates, and select the type of separation.\nEnter monthly wage, earned leave, and any notice/lay-off days that apply.\nPress Calculate to see the full receivable, deductions, and net payable breakdown.',
+               bn: 'যোগদান ও সর্বশেষ উপস্থিতির তারিখ দিন এবং নিষ্পত্তির ধরন বেছে নিন।\nমাসিক মজুরি, অর্জিত ছুটি এবং প্রযোজ্য নোটিশ/লে-অফের দিন দিন।\nহিসাব চাপুন — মোট প্রাপ্য, কর্তন ও নিট প্রদেয়ের সম্পূর্ণ বিবরণ দেখুন।' },
+  call:     { en: 'Tap Start call to get a link, and send it to the other person any way you like.\nOr open a link someone sent you to answer.\nWorks browser to browser — no account needed.',
+               bn: 'কল শুরু করুন চাপুন, একটি লিংক পাবেন — যেকোনো মাধ্যমে অন্য ব্যক্তিকে পাঠান।\nঅথবা কেউ পাঠানো লিংক খুলে উত্তর দিন।\nব্রাউজার টু ব্রাউজার কাজ করে — কোনো অ্যাকাউন্ট প্রয়োজন নেই।' },
+  dietchart: { en: 'Enter gender, age, weight, height, activity level and goal.\nChoose meals per day and diet preference.\nPress Calculate to see your calorie target, macros, and a meal-wise chart with food ideas.',
+               bn: 'লিঙ্গ, বয়স, ওজন, উচ্চতা, কার্যকলাপ স্তর ও লক্ষ্য দিন।\nদৈনিক খাবারের সংখ্যা ও খাদ্যাভ্যাস বেছে নিন।\nহিসাব চাপুন — ক্যালরি লক্ষ্য, ম্যাক্রো ও বেলাভিত্তিক চার্ট এবং খাবার পরামর্শ দেখুন।' },
+  driveshare: { en: 'Tap to choose any file, optionally add your name and a note, then press Send.\nIt uploads straight into the app owner\'s chosen Google Drive folder — no Google sign-in needed on your end.',
+               bn: 'যেকোনো ফাইল বেছে নিন, ইচ্ছে হলে নাম ও নোট দিন, তারপর পাঠান চাপুন।\nএটি সরাসরি অ্যাপ পরিচালকের নির্বাচিত Google Drive ফোল্ডারে যাবে — আপনার Google লগইনের দরকার নেই।' },
+  wagesgrid: { en: 'Select the job category, enter each evaluation factor (score or level), and the existing gross wage.\nPress Calculate to see the total score, achieved percentage, and the wage increment payable per the grid.',
+               bn: 'পদের ধরন বেছে নিন, প্রতিটি মূল্যায়ন ফ্যাক্টর (স্কোর বা লেভেল) এবং বর্তমান মোট মজুরি দিন।\nহিসাব চাপুন — মোট স্কোর, অর্জিত শতাংশ ও গ্রিড অনুযায়ী প্রদেয় মজুরি বৃদ্ধি দেখুন।' },
+  support:  { en: '', bn: '' },
+};
+
+function AppInner() {
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const { history, add, clear } = useHistory();
+  const { lang } = useLang();
+
+  const handleBack  = useCallback(() => setActiveId(null), []);
+  const handleOpen  = useCallback((id: string) => setActiveId(id), []);
+  const handleHome  = useCallback(() => setActiveId(null), []);
+
+  const activeApp   = activeId ? APPS.find(a => a.id === activeId) : null;
+  const Screen      = activeId && activeId !== 'support' && activeId !== 'call' ? SCREENS[activeId] : null;
+  const ActiveIcon  = activeApp ? ICONS[activeApp.icon] : activeId === 'support' ? FaQuestionCircle : null;
+  const activeLabel = activeId ? (APP_LABELS[activeId]?.[lang] || activeId) : '';
+  const activeColor = activeApp?.color || (activeId === 'support' ? '#c41e3a' : '#e8e8e8');
+  const activeInfo  = activeId ? (APP_INFO[activeId]?.[lang] || '') : '';
+  const isGeneral   = activeId === 'general';
+
+  return (
+    <div style={{
+      width: '100dvw', height: '100dvh',
+      display: 'flex', flexDirection: 'column',
+      background: 'var(--bg)', overflow: 'hidden',
+    }}>
+      {/* Content area */}
+      <div style={{
+        flex: 1, minHeight: 0,
+        display: 'flex', flexDirection: 'column',
+        overflow: 'hidden',
+      }}>
+        {activeId ? (
+          <>
+            {/* Header gets info= so it renders the ⓘ tooltip */}
+            <Header
+              onBack={handleBack}
+              title={activeLabel}
+              accent={activeColor}
+              icon={ActiveIcon ?? undefined}
+              info={activeInfo || undefined}
+            />
+
+            {activeId === 'support' ? (
+              <div style={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
+                <SupportScreen />
+              </div>
+            ) : activeId === 'call' ? (
+              <div style={{ flex: 1, minHeight: 0, overflow: 'hidden' }}>
+                <CallScreen />
+              </div>
+            ) : Screen ? (
+              isGeneral ? (
+                <div style={{ flex: 1, minHeight: 0, background: 'var(--bg)', overflow: 'hidden' }}>
+                  <Screen history={history[activeId] || []} onAdd={add} onClear={clear} />
+                </div>
+              ) : (
+                <div style={{ flex: 1, minHeight: 0, overflow: 'hidden' }}>
+                  <Screen history={history[activeId] || []} onAdd={add} onClear={clear} />
+                </div>
+              )
+            ) : null}
+          </>
+        ) : (
+          <HomeScreen onOpen={handleOpen} history={history} />
+        )}
+      </div>
+
+      {/* Bottom nav — always visible */}
+      <BottomNav
+        activeId={activeId}
+        onOpen={handleOpen}
+        onShowHome={handleHome}
+      />
+    </div>
+  );
+}
+
+export default function App() {
+  return (
+    <ThemeProvider>
+      <LangProvider>
+        <AppInner />
+      </LangProvider>
+    </ThemeProvider>
+  );
+}

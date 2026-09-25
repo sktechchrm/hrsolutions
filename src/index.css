@@ -1,0 +1,204 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ─── Dark mode (default) ─────────────────────────────────────── */
+:root {
+  --font-bn:  'Noto Serif Bengali','Noto Sans Bengali',serif;
+  --font-en:  'Inter','Noto Serif Bengali',sans-serif;
+  --font:     'Noto Serif Bengali','Inter',sans-serif;
+
+  /* Background layers */
+  --bg:        #0f0f14;
+  --bg-deep:   #07080d;
+  --surface:   #1a1a1e;
+  --surface2:  #222228;
+  --surface3:  #2a2a32;
+
+  /* Borders */
+  --border:    #2e2e38;
+  --border2:   #3a3a48;
+
+  /* Text */
+  --text:      #f1f0f5;
+  --text2:     #a8a4b8;
+  --text3:     #6b6780;
+  --text4:     #3a3a48;
+
+  /* Brand */
+  --accent:    #c41e3a;
+  --gold:      #d4a017;
+
+  /* Semantic helpers */
+  --success:   #10b981;
+  --warning:   #f59e0b;
+  --error:     #ef4444;
+  --info:      #3b82f6;
+
+  /* General calc keypad */
+  --kpad-bg:   #1c1c24;
+  --btn-num:   #252530;
+  --btn-op:    #2a1e0e;
+  --btn-fn:    #1e1e2a;
+  --btn-eq:    #7c3aed;
+  --btn-del:   #2a1010;
+
+  /* Layout */
+  --nav-h:      60px;
+  --header-h:   58px;
+  --safe-top:   env(safe-area-inset-top, 0px);
+  --safe-bot:   env(safe-area-inset-bottom, 0px);
+  --radius-sm:  10px;
+  --radius-md:  14px;
+  --radius-lg:  18px;
+
+  /* Transitions */
+  --theme-transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+
+  /* Font sizes */
+  --fs-xs:   11px;
+  --fs-sm:   13px;
+  --fs-base: 15px;
+  --fs-md:   17px;
+  --fs-lg:   19px;
+  --fs-xl:   22px;
+}
+
+/* ─── Light mode ──────────────────────────────────────────────── */
+[data-theme="light"] {
+  --bg:        #f4f4f8;
+  --bg-deep:   #e8e8f0;
+  --surface:   #ffffff;
+  --surface2:  #f0f0f6;
+  --surface3:  #e4e4ee;
+
+  --border:    #d4d4e0;
+  --border2:   #c0c0d0;
+
+  --text:      #1a1a2e;
+  --text2:     #4a4a6a;
+  --text3:     #8888aa;
+  --text4:     #ccccdd;
+
+  --accent:    #c41e3a;
+  --gold:      #b8880a;
+
+  --success:   #059669;
+  --warning:   #d97706;
+  --error:     #dc2626;
+  --info:      #2563eb;
+
+  --kpad-bg:   #e8e8f0;
+  --btn-num:   #ffffff;
+  --btn-op:    #fff3e0;
+  --btn-fn:    #f0f0fc;
+  --btn-eq:    #7c3aed;
+  --btn-del:   #fff0f0;
+}
+
+/* ─── Base styles ─────────────────────────────────────────────── */
+html {
+  height: 100%; width: 100%;
+  overflow: hidden;
+  background: var(--bg-deep);
+  transition: var(--theme-transition);
+}
+
+body {
+  height: 100%; width: 100%;
+  overflow: hidden;
+  font-family: var(--font);
+  font-size: var(--fs-base);
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  color: var(--text);
+  background: var(--bg);
+  line-height: 1.5;
+  transition: var(--theme-transition);
+}
+
+#root {
+  height: 100%; width: 100%;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  background: var(--bg-deep);
+}
+
+.app-shell {
+  width: 100%; max-width: 560px;
+  height: 100svh; height: 100dvh; height: 100vh;
+  display: flex; flex-direction: column;
+  background: var(--bg);
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 0 80px rgba(0,0,0,0.4);
+  transition: var(--theme-transition);
+}
+
+.screen-body {
+  flex: 1;
+  overflow-y: auto; overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  background: var(--bg);
+  transition: background 0.25s ease;
+}
+
+.screen-inner {
+  padding: 18px;
+  padding-bottom: calc(var(--nav-h) + var(--safe-bot) + 18px);
+  min-height: 100%; width: 100%;
+  max-width: 100%; overflow-x: hidden;
+}
+
+/* ─── Form elements ───────────────────────────────────────────── */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+input, button, select, textarea {
+  -webkit-appearance: none;
+  touch-action: manipulation;
+  font-family: var(--font);
+  max-width: 100%;
+}
+
+/* ─── Scrollbar ───────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--border2);
+  border-radius: 4px;
+}
+
+/* ─── Animations ──────────────────────────────────────────────── */
+@keyframes slideUp {
+  from { transform: translateY(16px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+@keyframes popIn {
+  0%   { transform: scale(0.88); opacity: 0; }
+  65%  { transform: scale(1.03); }
+  100% { transform: scale(1);    opacity: 1; }
+}
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-7px); }
+}
+@keyframes toastUp {
+  from { transform: translateX(-50%) translateY(12px); opacity: 0; }
+  to   { transform: translateX(-50%) translateY(0);    opacity: 1; }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes themeFlash {
+  0%   { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+.theme-change { animation: themeFlash 0.25s ease; }
