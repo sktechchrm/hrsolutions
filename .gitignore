@@ -1,0 +1,27 @@
+# Dependencies
+node_modules
+
+# Build output
+dist
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment / local config
+*.local
+.env
+.env.*
+
+# Android signing — NEVER commit these
+*.keystore
+*.jks
+android/local.properties
+
+# Android build output
+android/.gradle
+android/app/build
+android/build
+
+# Capacitor
+android/app/src/main/assets/public
