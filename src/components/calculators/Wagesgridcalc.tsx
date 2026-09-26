@@ -303,7 +303,8 @@ export default function WagesGridCalc({ history, onAdd, onClear }: CalcProps) {
       historyLabel={bn ? 'ইতিহাস' : 'History'}
       clearLabel={bn ? 'মুছুন' : 'Clear'}
     >
-      <div style={{ display: 'flex', gap: 4, padding: 4, marginBottom: 14, background: 'var(--surface2)', border: `1px solid var(--border)`, borderRadius: 12 }}>
+      <style>{'@media print { .wg-no-print { display: none !important; } }'}</style>
+      <div className="wg-no-print" style={{ display: 'flex', gap: 4, padding: 4, marginBottom: 14, background: 'var(--surface2)', border: `1px solid var(--border)`, borderRadius: 12 }}>
         {TABS.map(t => {
           const on = tab === t.id;
           return (
@@ -331,8 +332,8 @@ export default function WagesGridCalc({ history, onAdd, onClear }: CalcProps) {
             <FaInfoCircle size={15} color={A} style={{ flexShrink: 0, marginTop: 2 }} />
             <div style={{ fontSize: 11, color: A, lineHeight: 1.55 }}>
               {bn
-                ? 'পারফরম্যান্স স্কোরিং অনুযায়ী মজুরি বৃদ্ধির হিসাব — প্রতিটি পদের নিজস্ব মূল্যায়ন মানদণ্ড ও গ্রিড রয়েছে। ন্যূনতম ৫% বৃদ্ধি নিশ্চিত, তার বেশি অর্জিত হলে সেটাই প্রদেয়।'
-                : 'Performance-scored wage increment — each job category has its own evaluation factors and grid. A minimum 5% increase is guaranteed; if the achieved amount exceeds that, the achieved amount is paid instead.'}
+                ? `পারফরম্যান্স স্কোরিং অনুযায়ী মজুরি বৃদ্ধির হিসাব — প্রতিটি পদের নিজস্ব মূল্যায়ন মানদণ্ড ও গ্রিড রয়েছে। পুরাতন কর্মীদের জন্য ন্যূনতম ${FLOOR_PCT * 100}% বৃদ্ধি নিশ্চিত, তার বেশি অর্জিত হলে সেটাই প্রদেয়। নতুন যোগদানকারীদের ক্ষেত্রে শুধু পারফরম্যান্স-ভিত্তিক বৃদ্ধিই প্রযোজ্য।`
+                : `Performance-scored wage increment — each job category has its own evaluation factors and grid. Existing employees get a guaranteed ${FLOOR_PCT * 100}% floor; new joiners get only the performance-based amount.`}
             </div>
           </div>
 

@@ -21,57 +21,206 @@ const T = {
 };
 
 const STYLES = `
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=Space+Mono:wght@700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Space+Mono:wght@700&display=swap');
+
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html,body,#root{width:100%;height:100%;overflow:hidden;background:#07080d}
-@keyframes _floatUp{from{opacity:0;transform:translateY(14px) scale(0.92)}to{opacity:1;transform:none}}
-.hsc-theme-btn{transition:background 0.2s,color 0.2s;}
-@keyframes _bob{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-5px) rotate(2deg)}}
+
+html,body,#root{
+  width:100%;height:100%;overflow:hidden;
+  background:var(--bg);
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+
+button,input,select,textarea{font:inherit}
+button{-webkit-tap-highlight-color:transparent}
+
+@keyframes _floatUp{
+  from{opacity:0;transform:translateY(10px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+@keyframes _bob{
+  0%,100%{transform:translateY(0) rotate(-2deg)}
+  50%{transform:translateY(-4px) rotate(2deg)}
+}
+
+.hsc-theme-btn{
+  transition:background .2s ease,color .2s ease,border-color .2s ease,transform .16s ease,box-shadow .2s ease;
+}
+.hsc-theme-btn:hover{
+  transform:translateY(-1px);
+  box-shadow:0 4px 14px rgba(0,0,0,.10);
+}
+.hsc-theme-btn:active{transform:scale(.97)}
+
 .hsc-card{
-  position:relative;cursor:pointer;border:none;
+  position:relative;
+  cursor:pointer;
+  border:none;
   background:var(--surface);
-  box-shadow:inset 0 0 0 1px var(--border);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  overflow:hidden;outline:none;
-  transition:transform .16s cubic-bezier(.22,1,.36,1),background .16s,box-shadow .16s;
+  box-shadow:
+    inset 0 0 0 1px var(--border),
+    0 2px 8px rgba(0,0,0,.035);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  outline:none;
+  isolation:isolate;
+  transition:
+    transform .18s cubic-bezier(.22,1,.36,1),
+    background .18s ease,
+    box-shadow .18s ease;
 }
+
 .hsc-card::before{
-  content:'';position:absolute;inset:0;border-radius:inherit;
-  background:radial-gradient(ellipse at 50% -5%,var(--ac)1a 0%,transparent 68%);
-  opacity:0;transition:opacity .2s;pointer-events:none;
+  content:'';
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  background:
+    radial-gradient(circle at 50% 8%,var(--ac)18 0%,transparent 62%);
+  opacity:0;
+  transition:opacity .2s ease;
+  pointer-events:none;
+  z-index:-1;
 }
-.hsc-card:hover::before,.hsc-card:focus-visible::before{opacity:1}
+
+.hsc-card::after{
+  content:'';
+  position:absolute;
+  left:12%;
+  right:12%;
+  bottom:0;
+  height:2px;
+  border-radius:2px;
+  background:var(--ac);
+  opacity:0;
+  transform:scaleX(.45);
+  transition:opacity .2s ease,transform .2s ease;
+  pointer-events:none;
+}
+
+.hsc-card:hover::before,
+.hsc-card:focus-visible::before{opacity:1}
+
+.hsc-card:hover::after,
+.hsc-card:focus-visible::after{
+  opacity:.8;
+  transform:scaleX(1);
+}
+
 .hsc-card:hover{
-  transform:translateY(-3px) scale(1.03);
+  transform:translateY(-2px);
   background:var(--surface2);
-  box-shadow:inset 0 0 0 1.5px var(--ac)88,0 0 18px var(--ac)2a;
+  box-shadow:
+    inset 0 0 0 1px var(--ac)55,
+    0 8px 22px rgba(0,0,0,.08);
 }
-.hsc-card:active{transform:scale(0.93)!important;transition-duration:.06s}
-.hsc-card:focus-visible{box-shadow:0 0 0 2px var(--ac)}
+
+.hsc-card:active{
+  transform:translateY(0) scale(.985)!important;
+  transition-duration:.06s;
+}
+
+.hsc-card:focus-visible{
+  box-shadow:
+    0 0 0 2px var(--surface),
+    0 0 0 4px var(--ac);
+}
+
 .hsc-badge{
-  position:absolute;background:var(--ac);color:#fff;
-  border-radius:5px;font-weight:900;
-  display:flex;align-items:center;justify-content:center;
-  font-family:'Space Mono',monospace;z-index:2;
+  position:absolute;
+  background:var(--ac);
+  color:#fff;
+  border-radius:50%;
+  font-weight:800;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-family:'Space Mono',monospace;
+  z-index:2;
+  box-shadow:0 2px 8px rgba(0,0,0,.16);
 }
+
 .hsc-pod{
-  display:flex;align-items:center;justify-content:center;flex-shrink:0;
-  background:var(--surface2);
-  border:1.5px solid var(--border2,var(--border));
-  transition:transform .16s,box-shadow .16s;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+  background:color-mix(in srgb,var(--ac) 8%,var(--surface2));
+  border:1px solid color-mix(in srgb,var(--ac) 20%,var(--border));
+  transition:transform .18s ease,box-shadow .18s ease,background .18s ease;
 }
-.hsc-card:hover .hsc-pod{transform:scale(1.1);box-shadow:0 0 10px var(--ac)3a}
-.hsc-lm{font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block;width:100%;text-align:center}
-.hsc-ls{font-weight:400;color:var(--text3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block;width:100%;text-align:center}
+
+.hsc-card:hover .hsc-pod{
+  transform:scale(1.06);
+  background:color-mix(in srgb,var(--ac) 13%,var(--surface2));
+  box-shadow:0 5px 16px color-mix(in srgb,var(--ac) 18%,transparent);
+}
+
+.hsc-lm{
+  font-weight:700;
+  color:var(--text);
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  display:block;
+  width:100%;
+  text-align:center;
+  letter-spacing:-.1px;
+}
+
+.hsc-ls{
+  font-weight:400;
+  color:var(--text3);
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  display:block;
+  width:100%;
+  text-align:center;
+}
+
 .hsc-langbtn{
-  background:var(--surface);border:1px solid var(--border);
-  color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:6px;
-  font-family:'Outfit',sans-serif;font-weight:700;
-  transition:background .2s,color .2s;flex-shrink:0;
-  border-radius:10px;height:32px;padding:0 14px;font-size:11px;
+  appearance:none;
+  -webkit-appearance:none;
+  background:var(--surface);
+  border:1px solid var(--border);
+  color:var(--text2);
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  font-family:'Outfit',sans-serif;
+  font-weight:700;
+  transition:background .2s ease,color .2s ease,border-color .2s ease,transform .16s ease,box-shadow .2s ease;
+  flex-shrink:0;
+  border-radius:10px;
+  height:32px;
+  padding:0 14px;
+  font-size:11px;
 }
-.hsc-langbtn:hover{background:var(--surface2);color:var(--text)}
+
+.hsc-langbtn:hover{
+  background:var(--surface2);
+  color:var(--text);
+  border-color:var(--border2,var(--border));
+  transform:translateY(-1px);
+  box-shadow:0 4px 14px rgba(0,0,0,.08);
+}
+
+.hsc-langbtn:active{transform:scale(.97)}
+
+@media (prefers-reduced-motion:reduce){
+  .hsc-card,.hsc-card::before,.hsc-card::after,.hsc-pod,
+  .hsc-theme-btn,.hsc-langbtn{transition:none!important}
+  .hsc-card{animation:none!important}
+}
 `;
+
 
 const ICON_MAP: Record<string, React.ComponentType<{ size?: number; color?: string }>> = {
   FaCalculator, FaUniversity, FaBirthdayCake, FaWeight,
@@ -199,6 +348,7 @@ export default function HomeScreen({ onOpen, history }: Props) {
         paddingInline: 'clamp(12px,3vw,24px)',
         background:    T.bgHeader,
         borderBottom:  `1px solid ${T.border}`,
+        boxShadow: '0 4px 20px rgba(0,0,0,.045)',
         backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -258,8 +408,8 @@ export default function HomeScreen({ onOpen, history }: Props) {
           }}>
             {/* Section label */}
             <p style={{
-              fontFamily: T.fontMono, fontSize: 9, fontWeight: 700,
-              color: T.textMuted, letterSpacing: '2px', textTransform: 'uppercase',
+              fontFamily: T.fontMono, fontSize: 9, fontWeight: 800,
+              color: T.textMuted, letterSpacing: '1.8px', textTransform: 'uppercase',
               marginBottom: 8, flexShrink: 0,
             }}>{t.selectCalc}</p>
 
