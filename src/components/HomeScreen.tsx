@@ -205,7 +205,7 @@ export default function HomeScreen({ onOpen, history }: Props) {
           <span style={{
             fontSize: 'clamp(18px,3vw,26px)', lineHeight: 1, flexShrink: 0,
             display: 'inline-block', animation: '_bob 3s ease-in-out infinite',
-          }}>🧮</span>
+          }}>🧩</span>
           <div>
             <h1 style={{
               fontFamily: T.fontMono, margin: 0,

@@ -303,7 +303,8 @@ export default function WagesGridCalc({ history, onAdd, onClear }: CalcProps) {
       historyLabel={bn ? 'ইতিহাস' : 'History'}
       clearLabel={bn ? 'মুছুন' : 'Clear'}
     >
-      <div style={{ display: 'flex', gap: 4, padding: 4, marginBottom: 14, background: 'var(--surface2)', border: `1px solid var(--border)`, borderRadius: 12 }}>
+      <style>{'@media print { .wg-no-print { display: none !important; } }'}</style>
+      <div className="wg-no-print" style={{ display: 'flex', gap: 4, padding: 4, marginBottom: 14, background: 'var(--surface2)', border: `1px solid var(--border)`, borderRadius: 12 }}>
         {TABS.map(t => {
           const on = tab === t.id;
           return (

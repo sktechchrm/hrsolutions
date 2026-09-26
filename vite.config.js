@@ -14,10 +14,10 @@ export default defineConfig({
           '**/*.{js,css,html,ico,png,svg,jpg,jpeg,webp,woff,woff2,ttf}'
         ],
 
-        navigateFallback: '/calculator/index.html',
+        navigateFallback: '/hrsolutions/index.html',
 
         navigateFallbackDenylist: [
-          /^\/calculator\/api\//
+          /^\/hrsolutions\/api\//
         ],
 
         cleanupOutdatedCaches: true,
