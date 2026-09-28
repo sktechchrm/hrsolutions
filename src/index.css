@@ -1,0 +1,278 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ─── Dark mode (default) ─────────────────────────────────────── */
+:root {
+  --font-bn:  'Noto Serif Bengali','Noto Sans Bengali',serif;
+  --font-en:  'Inter','Noto Serif Bengali',sans-serif;
+  --font:     'Noto Serif Bengali','Inter',sans-serif;
+
+  /* Background layers */
+  --bg:        #0f0f14;
+  --bg-deep:   #07080d;
+  --surface:   #1a1a1e;
+  --surface2:  #222228;
+  --surface3:  #2a2a32;
+
+  /* Borders */
+  --border:    #2e2e38;
+  --border2:   #3a3a48;
+
+  /* Text
+     NOTE on --text3: raised from the original #6b6780 (3.2–3.5:1 on
+     --bg/--surface, below the WCAG AA 4.5:1 text minimum) to #87839b,
+     which holds the same hue/saturation but reaches ~4.75–5.2:1. It's
+     used for secondary labels, hints and inactive nav text, all real
+     content someone needs to read, not decoration. */
+  --text:      #f1f0f5;
+  --text2:     #a8a4b8;
+  --text3:     #87839b;
+  --text4:     #3a3a48;
+
+  /* Brand */
+  --accent:    #c41e3a;
+  --gold:      #d4a017;
+
+  /* Semantic helpers */
+  --success:   #10b981;
+  --warning:   #f59e0b;
+  --error:     #ef4444;
+  --info:      #3b82f6;
+
+  /* General calc keypad */
+  --kpad-bg:   #1c1c24;
+  --btn-num:   #252530;
+  --btn-op:    #2a1e0e;
+  --btn-fn:    #1e1e2a;
+  --btn-eq:    #7c3aed;
+  --btn-del:   #2a1010;
+
+  --shadow-card: 0 2px 8px rgba(0,0,0,.25);
+  --shadow-nav:  0 -4px 24px rgba(0,0,0,.5);
+  --shadow-bar:  0 4px 20px rgba(0,0,0,.35);
+  --field-bg:    #1a1a1e;
+  --seg-bg:      #111113;
+  --wa-bg:       #0d2e18;  --wa-fg: #25d366;  --wa-bd: #25d36640;
+  --danger-bg:   #2a0a0a;  --danger-fg: #e74c3c;
+
+  /* Layout */
+  --nav-h:      60px;
+  --header-h:   58px;
+  --safe-top:   env(safe-area-inset-top, 0px);
+  --safe-bot:   env(safe-area-inset-bottom, 0px);
+  --radius-sm:  10px;
+  --radius-md:  14px;
+  --radius-lg:  18px;
+
+  /* Transitions */
+  --theme-transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+
+  /* Font sizes */
+  --fs-xs:   11px;
+  --fs-sm:   13px;
+  --fs-base: 15px;
+  --fs-md:   17px;
+  --fs-lg:   19px;
+  --fs-xl:   22px;
+}
+
+/* ─── Light mode ──────────────────────────────────────────────── */
+[data-theme="light"] {
+  /* Cool slate day palette: soft blue-grey canvas, white cards lifted by
+     a light shadow instead of heavy borders, near-navy text. */
+  --bg:        #f3f5f9;
+  --bg-deep:   #e6eaf2;
+  --surface:   #ffffff;
+  --surface2:  #f6f8fc;
+  --surface3:  #e9edf5;
+
+  --border:    #dfe4ee;
+  --border2:   #cdd4e2;
+
+  /* All text tiers keep AA on --bg, --surface and --surface3 (>=5:1) */
+  --text:      #0f172a;
+  --text2:     #475569;
+  --text3:     #5b6478;
+  --text4:     #cbd5e1;
+
+  --accent:    #c41e3a;
+  --gold:      #a16e05;
+
+  --success:   #059669;
+  --warning:   #d97706;
+  --error:     #dc2626;
+  --info:      #2563eb;
+
+  --kpad-bg:   #e6eaf2;
+  --btn-num:   #ffffff;
+  --btn-op:    #fff3e0;
+  --btn-fn:    #f0f0fc;
+  --btn-eq:    #7c3aed;
+  --btn-del:   #fff0f0;
+
+  --shadow-card: 0 1px 2px rgba(15,23,42,.05), 0 6px 20px rgba(15,23,42,.06);
+  --shadow-nav:  0 -1px 0 rgba(15,23,42,.04), 0 -8px 24px rgba(15,23,42,.06);
+  --shadow-bar:  0 1px 0 rgba(15,23,42,.04), 0 6px 20px rgba(15,23,42,.05);
+  --field-bg:    #ffffff;
+  --seg-bg:      #e9edf5;
+  --wa-bg:       #dcfce7;  --wa-fg: #15803d;  --wa-bd: #86efac;
+  --danger-bg:   #fee2e2;  --danger-fg: #b91c1c;
+}
+
+/* ─── Base styles ─────────────────────────────────────────────── */
+html {
+  height: 100%; width: 100%;
+  overflow: hidden;
+  background: var(--bg-deep);
+  transition: var(--theme-transition);
+}
+
+body {
+  height: 100%; width: 100%;
+  overflow: hidden;
+  font-family: var(--font);
+  font-size: var(--fs-base);
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  color: var(--text);
+  background: var(--bg);
+  line-height: 1.5;
+  transition: var(--theme-transition);
+}
+
+#root {
+  height: 100%; width: 100%;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  background: var(--bg-deep);
+}
+
+/*
+ * .app-shell width: on phones this fills the viewport like any native
+ * app. On tablet/desktop it used to stay capped at 560px, so the whole
+ * app sat as a narrow phone-shaped card with a large empty margin on
+ * either side — the Home grid's own column logic (3/4/6 columns by
+ * width, see HomeScreen.tsx numCols()) never got a wide enough
+ * container to use those extra columns. The breakpoints below let the
+ * shell grow with the viewport instead, so tablet and desktop actually
+ * get a wider layout rather than a stretched phone card.
+ */
+.app-shell {
+  width: 100%; max-width: 560px;
+  height: 100svh; height: 100dvh; height: 100vh;
+  display: flex; flex-direction: column;
+  background: var(--bg);
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 0 80px rgba(0,0,0,0.4);
+  transition: var(--theme-transition);
+}
+
+/* Tablet: portrait/landscape tablets and small laptops */
+@media (min-width: 768px) {
+  .app-shell { max-width: 900px; }
+}
+
+/* Desktop: give the grid room to show more columns at once */
+@media (min-width: 1024px) {
+  .app-shell {
+    max-width: 1200px;
+    height: min(calc(100dvh - 32px), 860px);
+    margin: 16px 0;
+    border-radius: var(--radius-lg);
+    box-shadow: 0 0 0 1px var(--border), 0 20px 80px rgba(0,0,0,0.5);
+  }
+}
+
+.screen-body {
+  flex: 1;
+  overflow-y: auto; overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  background: var(--bg);
+  transition: background 0.25s ease;
+}
+
+.screen-inner {
+  padding: 18px;
+  padding-bottom: calc(var(--nav-h) + var(--safe-bot) + 18px);
+  min-height: 100%; width: 100%;
+  max-width: 100%; overflow-x: hidden;
+}
+
+/* ─── Form elements ───────────────────────────────────────────── */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+input, button, select, textarea {
+  appearance: none;
+  touch-action: manipulation;
+  font-family: var(--font);
+  max-width: 100%;
+}
+
+/* ─── Scrollbar ───────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--border2);
+  border-radius: 4px;
+}
+
+/* ─── Animations ──────────────────────────────────────────────── */
+@keyframes slideUp {
+  from { transform: translateY(16px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+@keyframes popIn {
+  0%   { transform: scale(0.88); opacity: 0; }
+  65%  { transform: scale(1.03); }
+  100% { transform: scale(1);    opacity: 1; }
+}
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-7px); }
+}
+@keyframes toastUp {
+  from { transform: translateX(-50%) translateY(12px); opacity: 0; }
+  to   { transform: translateX(-50%) translateY(0);    opacity: 1; }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes themeFlash {
+  0%   { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+.theme-change { animation: themeFlash 0.25s ease; }
+
+/* ── Accessibility: visible keyboard focus (WCAG 2.4.7) ────────────────
+   Buttons/inputs had no focus style at all, so keyboard users couldn't
+   see where they were. :focus-visible only shows for keyboard focus, so
+   mouse/touch users see no change. */
+button:focus-visible,
+a:focus-visible,
+select:focus-visible,
+[role="button"]:focus-visible,
+[tabindex]:focus-visible {
+  outline: 3px solid #f59e0b;
+  outline-offset: 2px;
+}
+input:focus-visible, textarea:focus-visible { outline: 3px solid #f59e0b !important; outline-offset: 1px; }
+
+/* Respect users who ask for less motion (WCAG 2.3.3) */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

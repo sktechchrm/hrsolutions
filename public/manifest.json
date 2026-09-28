@@ -1,0 +1,90 @@
+{
+  "name": "HR Smart Solutions",
+  "short_name": "HR Solutions",
+  "description": "Maternity benefit, final settlement, wages grid and file sharing in Bangla and English. Made by Saiful Islam (SK BD Technology).",
+  "start_url": "/calculator/",
+  "scope": "/calculator/",
+  "display": "standalone",
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
+  "background_color": "#f0f4ff",
+  "theme_color": "#667eea",
+  "orientation": "portrait-primary",
+  "lang": "bn",
+  "dir": "ltr",
+  "categories": [
+    "utilities",
+    "finance",
+    "productivity",
+    "lifestyle"
+  ],
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "/calculator/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/calculator/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/calculator/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/calculator/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/calculator/screenshots/home.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Home Screen"
+    },
+    {
+      "src": "/calculator/screenshots/calc.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "HR Smart Solutions"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Maternity Benefit",
+      "short_name": "Maternity",
+      "url": "/calculator/",
+      "icons": [
+        {
+          "src": "/calculator/icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Final Settlement",
+      "short_name": "Settlement",
+      "url": "/calculator/",
+      "icons": [
+        {
+          "src": "/calculator/icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ]
+}
