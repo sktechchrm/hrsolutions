@@ -17,10 +17,10 @@ import BottomNav  from './components/BottomNav.tsx';
 import SupportScreen from './components/SupportScreen.tsx';
 import CallScreen  from './components/CallScreen.tsx';
 
-import MaternityCalc  from './components/calculators/MaternityCalc.tsx';
-import FinalSettlementCalc from './components/calculators/FinalSettlementCalc.tsx';
-import DriveShareCalc from './components/calculators/Drivesharecalc.tsx';
-import WagesGridCalc  from './components/calculators/Wagesgridcalc.tsx';
+import MaternityCalc  from './components/solutions/MaternityCalc.tsx';
+import FinalSettlementCalc from './components/solutions/FinalSettlementCalc.tsx';
+import DriveShareCalc from './components/solutions/Drivesharecalc.tsx';
+import WagesGridCalc  from './components/solutions/Wagesgridcalc.tsx';
 
 // 'call' and 'support' are NOT registered here — neither takes CalcProps
 // (no history/onAdd/onClear) — both are special-cased in AppInner below.
