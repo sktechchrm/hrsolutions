@@ -17,10 +17,10 @@ import BottomNav  from './components/BottomNav.tsx';
 import SupportScreen from './components/SupportScreen.tsx';
 import CallScreen  from './components/CallScreen.tsx';
 
-import MaternityCalc  from './components/solutions/MaternityCalc.tsx';
-import FinalSettlementCalc from './components/solutions/FinalSettlementCalc.tsx';
-import DriveShareCalc from './components/solutions/Drivesharecalc.tsx';
-import WagesGridCalc  from './components/solutions/Wagesgridcalc.tsx';
+import MaternityCalc  from './components/calculators/MaternityCalc.tsx';
+import FinalSettlementCalc from './components/calculators/FinalSettlementCalc.tsx';
+import DriveShareCalc from './components/calculators/Drivesharecalc.tsx';
+import WagesGridCalc  from './components/calculators/Wagesgridcalc.tsx';
 
 // 'call' and 'support' are NOT registered here — neither takes CalcProps
 // (no history/onAdd/onClear) — both are special-cased in AppInner below.
@@ -39,7 +39,7 @@ const APP_LABELS: Record<string, { en: string; bn: string }> = {
   maternity: { en: 'Maternity Benefit', bn: 'মাতৃত্ব সুবিধা' },
   finalsettlement: { en: 'Final Settlement', bn: 'চূড়ান্ত পাওনা' },
   call:     { en: 'Video Call',   bn: 'ভিডিও কল' },
-  driveshare: { en: 'Send File',  bn: 'ফাইল পাঠান' },
+  driveshare: { en: 'Share File',  bn: 'ফাইল শেয়ার' },
   wagesgrid: { en: 'Wages Grid',  bn: 'ওয়েজেস গ্রিড' },
   support:  { en: 'Support',      bn: 'সাপোর্ট' },
 };
@@ -52,8 +52,8 @@ const APP_INFO: Record<string, { en: string; bn: string }> = {
                bn: 'যোগদান ও সর্বশেষ উপস্থিতির তারিখ দিন এবং নিষ্পত্তির ধরন বেছে নিন।\nমাসিক মজুরি, অর্জিত ছুটি এবং প্রযোজ্য নোটিশ/লে-অফের দিন দিন।\nহিসাব চাপুন — মোট প্রাপ্য, কর্তন ও নিট প্রদেয়ের সম্পূর্ণ বিবরণ দেখুন।' },
   call:     { en: 'Tap Start call to get a link, and send it to the other person any way you like.\nOr open a link someone sent you to answer.\nWorks browser to browser — no account needed.',
                bn: 'কল শুরু করুন চাপুন, একটি লিংক পাবেন — যেকোনো মাধ্যমে অন্য ব্যক্তিকে পাঠান।\nঅথবা কেউ পাঠানো লিংক খুলে উত্তর দিন।\nব্রাউজার টু ব্রাউজার কাজ করে — কোনো অ্যাকাউন্ট প্রয়োজন নেই।' },
-  driveshare: { en: 'Tap to choose any file, optionally add your name and a note, then press Send.\nIt uploads straight into the app owner\'s chosen Google Drive folder — no Google sign-in needed on your end.',
-               bn: 'যেকোনো ফাইল বেছে নিন, ইচ্ছে হলে নাম ও নোট দিন, তারপর পাঠান চাপুন।\nএটি সরাসরি অ্যাপ পরিচালকের নির্বাচিত Google Drive ফোল্ডারে যাবে — আপনার Google লগইনের দরকার নেই।' },
+  driveshare: { en: 'Choose a file (or switch to Text / data and type it), then tap Upload & get link.\nGoogle asks you to sign in once. The file is saved in YOUR Google Drive and a download link is created.\nSend the link on WhatsApp — the receiver taps it and the file downloads, no account needed. Tap Stop sharing to switch the link off.',
+               bn: 'ফাইল বেছে নিন (অথবা “লেখা / ডাটা” বেছে লিখুন), তারপর “আপলোড ও লিংক নিন” চাপুন।\nপ্রথমবার Google সাইন-ইন চাইবে। ফাইল আপনার নিজের Google Drive-এ জমা হবে এবং ডাউনলোড লিংক তৈরি হবে।\nলিংক WhatsApp-এ পাঠান — প্রাপক ক্লিক করলেই ফাইল ডাউনলোড হবে, অ্যাকাউন্ট লাগবে না। লিংক বন্ধ করতে “শেয়ারিং বন্ধ করুন” চাপুন।' },
   wagesgrid: { en: 'Select the job category, enter each evaluation factor (score or level), and the existing gross wage.\nPress Calculate to see the total score, achieved percentage, and the wage increment payable per the grid.',
                bn: 'পদের ধরন বেছে নিন, প্রতিটি মূল্যায়ন ফ্যাক্টর (স্কোর বা লেভেল) এবং বর্তমান মোট মজুরি দিন।\nহিসাব চাপুন — মোট স্কোর, অর্জিত শতাংশ ও গ্রিড অনুযায়ী প্রদেয় মজুরি বৃদ্ধি দেখুন।' },
   support:  { en: '', bn: '' },

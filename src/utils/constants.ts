@@ -12,7 +12,7 @@ export interface CalcProps {
 /**
  * Active apps shown on the Home screen.
  * Only 4 calculator tools are live right now — Maternity Benefit,
- * Final Settlement, Send File (Drive share) and Wages Grid.
+ * Final Settlement, Share File (Drive link share) and Wages Grid.
  * "call" (Video Call) is a separate live utility, not one of the 4
  * calculators, kept alongside them.
  *
