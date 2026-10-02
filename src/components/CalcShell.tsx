@@ -39,6 +39,15 @@ interface Props {
   historyLabel?: string;
   clearLabel?:   string;
   children:      React.ReactNode;
+  /** While true, the Calculate/Upload button is disabled and shows
+   * `busyLabel` instead of `calcLabel` — stops a fast double-tap from
+   * firing the same async action (e.g. a file upload) twice. */
+  busy?:         boolean;
+  busyLabel?:    string;
+  /** Custom renderer for each history row (newest first, index 0 =
+   * newest). Falls back to plain text — most calculators just show a
+   * one-line summary, but e.g. Share File wants a copy/open button. */
+  renderHistoryItem?: (item: string, index: number) => React.ReactNode;
 }
 
 export default function CalcShell({
@@ -51,6 +60,9 @@ export default function CalcShell({
   historyLabel = 'History',
   clearLabel = 'Clear',
   children,
+  busy = false,
+  busyLabel,
+  renderHistoryItem,
 }: Props) {
   const [histOpen, setHistOpen] = useState(false);
   const histCount = history.length;
@@ -102,25 +114,28 @@ export default function CalcShell({
         {/* Calculate */}
         <button
           onClick={onCalc}
+          disabled={busy}
+          aria-busy={busy}
           style={{
             flex: 1, padding: '14px 0',
             background: accent,
             color: onAccent(accent), border: 'none', borderRadius: 13,
             fontSize: 15, fontWeight: 800, fontFamily: D.font,
-            boxShadow: `0 4px 18px ${accent}44`,
-            cursor: 'pointer',
+            boxShadow: busy ? 'none' : `0 4px 18px ${accent}44`,
+            opacity: busy ? 0.6 : 1,
+            cursor: busy ? 'not-allowed' : 'pointer',
             display: 'flex', alignItems: 'center',
             justifyContent: 'center', gap: 7,
             minWidth: 0, letterSpacing: 0.3,
-            transition: 'transform 0.1s',
+            transition: 'transform 0.1s, opacity 0.15s',
           }}
-          onTouchStart={e => (e.currentTarget.style.transform = 'scale(0.96)')}
+          onTouchStart={e => { if (!busy) e.currentTarget.style.transform = 'scale(0.96)'; }}
           onTouchEnd={e => (e.currentTarget.style.transform = '')}
-          onMouseDown={e => (e.currentTarget.style.transform = 'scale(0.96)')}
+          onMouseDown={e => { if (!busy) e.currentTarget.style.transform = 'scale(0.96)'; }}
           onMouseUp={e => (e.currentTarget.style.transform = '')}
         >
           <FaCalculator size={14} aria-hidden />
-          {calcLabel}
+          {busy ? (busyLabel || calcLabel) : calcLabel}
         </button>
 
         {/* History */}
@@ -267,13 +282,9 @@ export default function CalcShell({
             ) : (
               [...history].reverse().map((item, i) => (
                 <div key={i} style={{
-                  fontSize: 13, padding: '9px 4px',
+                  padding: '9px 4px',
                   borderBottom: i < histCount - 1
                     ? `1px solid ${D.border}` : 'none',
-                  color: i === 0 ? D.textPri : D.textSec,
-                  lineHeight: 1.55,
-                  wordBreak: 'break-word',
-                  fontWeight: i === 0 ? 600 : 400,
                 }}>
                   {i === 0 && (
                     <span style={{
@@ -282,7 +293,13 @@ export default function CalcShell({
                       padding: '1px 5px', marginRight: 6, letterSpacing: 0.5,
                     }}>LATEST</span>
                   )}
-                  {item}
+                  {renderHistoryItem ? renderHistoryItem(item, i) : (
+                    <span style={{
+                      fontSize: 13, color: i === 0 ? D.textPri : D.textSec,
+                      lineHeight: 1.55, wordBreak: 'break-word',
+                      fontWeight: i === 0 ? 600 : 400,
+                    }}>{item}</span>
+                  )}
                 </div>
               ))
             )}

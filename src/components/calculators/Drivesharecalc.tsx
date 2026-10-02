@@ -9,7 +9,7 @@ import type { CalcProps } from '../../utils/constants.ts';
 import CalcShell from '../CalcShell';
 import { useLang } from '../../context/LangContext.tsx';
 import { useTheme } from '../../context/ThemeContext.tsx';
-import { accentInk } from '../../utils/color.ts';
+import { accentInk, onAccent } from '../../utils/color.ts';
 import { shareWA, buildShare } from '../../utils/share.ts';
 import {
   DRIVE_CLIENT_ID, MAX_UPLOAD_MB, DriveError, loadGis, isGisReady, isConnected,
@@ -27,6 +27,32 @@ function formatSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
   return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+}
+
+/**
+ * History entries are stored as small JSON strings instead of plain
+ * text so we can (a) show a real Copy/Open button per row and (b) spot
+ * "you already shared this exact file" before re-uploading it. Older
+ * entries saved before this change are plain "name · link" text —
+ * decodeEntry() returns null for those and the UI falls back to
+ * showing them as plain, non-interactive lines.
+ */
+interface HistEntry { n: string; s: number; dl: string; vw: string; t: number }
+function encodeEntry(e: HistEntry): string { return JSON.stringify(e); }
+function decodeEntry(raw: string): HistEntry | null {
+  try {
+    const d = JSON.parse(raw);
+    if (d && typeof d.n === 'string' && typeof d.dl === 'string') return d as HistEntry;
+  } catch { /* legacy plain-text entry */ }
+  return null;
+}
+function timeAgo(ts: number, bn: boolean): string {
+  const mins = Math.max(0, Math.round((Date.now() - ts) / 60000));
+  if (mins < 1) return bn ? 'এইমাত্র' : 'just now';
+  if (mins < 60) return bn ? `${mins} মিনিট আগে` : `${mins} min ago`;
+  const hrs = Math.round(mins / 60);
+  if (hrs < 24) return bn ? `${hrs} ঘণ্টা আগে` : `${hrs}h ago`;
+  return bn ? `${Math.round(hrs / 24)} দিন আগে` : `${Math.round(hrs / 24)}d ago`;
 }
 
 const card: React.CSSProperties = {
@@ -81,6 +107,8 @@ export default function DriveShareCalc({ history, onAdd, onClear }: CalcProps) {
   const [item, setItem] = useState<Shared | null>(null);
   const [copied, setCopied] = useState('');
   const [notice, setNotice] = useState('');
+  const [dupe, setDupe] = useState<HistEntry | null>(null);   // possible earlier upload of the same file
+  const [forceNew, setForceNew] = useState(false);            // user chose "Upload as new copy" past a dupe warning
 
   const configured = !!DRIVE_CLIENT_ID;
 
@@ -110,16 +138,33 @@ export default function DriveShareCalc({ history, onAdd, onClear }: CalcProps) {
     setError(errText(e));
   };
 
-  const pickFile = () => fileInputRef.current?.click();
-  const takeFile = (f: File | null) => { setFile(f); setItem(null); setError(''); setNotice(''); };
+  // If the tab is closed/refreshed mid-upload, Drive may end up with a
+  // partial or an orphaned file with no link ever shown — warn instead.
+  useEffect(() => {
+    const onBeforeUnload = (e: BeforeUnloadEvent) => { if (busy) { e.preventDefault(); e.returnValue = ''; } };
+    window.addEventListener('beforeunload', onBeforeUnload);
+    return () => window.removeEventListener('beforeunload', onBeforeUnload);
+  }, [busy]);
+
+  const pickFile = () => { if (!busy) fileInputRef.current?.click(); };
+  const takeFile = (f: File | null) => {
+    setFile(f); setItem(null); setError(''); setNotice(''); setForceNew(false);
+    // Same-session duplicate check: same name + same size uploaded before.
+    if (f) {
+      const match = history.map(decodeEntry).find(h => h && h.n === f.name && h.s === f.size);
+      setDupe(match || null);
+    } else setDupe(null);
+  };
 
   const upload = async () => {
+    if (busy) return; // re-entrancy guard: ignore a double-tap even if the button's disabled state is somehow bypassed
     setError(''); setNotice('');
     if (!configured) { setError(tr('অ্যাপ এখনো Google-এর সাথে সেটআপ হয়নি (DRIVE_SETUP.md দেখুন)।', 'The app is not connected to Google yet (see DRIVE_SETUP.md).')); return; }
 
     let blob: Blob; let name: string;
     if (mode === 'file') {
       if (!file) { setError(tr('আগে একটি ফাইল বেছে নিন।', 'Please choose a file first.')); return; }
+      if (dupe && !forceNew) return; // same name+size already shared — the dupe banner offers the choice, don't silently re-upload
       blob = file; name = file.name;
     } else {
       if (!textBody.trim()) { setError(tr('শেয়ার করার লেখা/ডাটা লিখুন।', 'Type the text or data you want to share.')); return; }
@@ -144,8 +189,10 @@ export default function DriveShareCalc({ history, onAdd, onClear }: CalcProps) {
       const l = links(up.id);
       const shared: Shared = { id: up.id, name: up.name, size: up.size, download: l.download, view: l.view, on: true };
       setItem(shared);
-      onAdd('driveshare', `${up.name} · ${l.download}`);
-      if (mode === 'file') { setFile(null); if (fileInputRef.current) fileInputRef.current.value = ''; }
+      onAdd('driveshare', encodeEntry({ n: up.name, s: up.size, dl: l.download, vw: l.view, t: Date.now() }));
+      // One less tap for the most common next step — sharing the link.
+      try { await navigator.clipboard.writeText(l.download); setCopied('dl'); setTimeout(() => setCopied(''), 1800); } catch { /* clipboard needs a user gesture in some browsers — Copy button still works */ }
+      if (mode === 'file') { setFile(null); setDupe(null); setForceNew(false); if (fileInputRef.current) fileInputRef.current.value = ''; }
       else { setTextBody(''); setTextTitle(''); }
     } catch (e) { onEachError(e); }
     finally { setBusy(false); setProgress(null); setStage(''); }
@@ -184,13 +231,33 @@ export default function DriveShareCalc({ history, onAdd, onClear }: CalcProps) {
     <CalcShell
       accent={A}
       onCalc={upload}
-      calcLabel={busy ? tr('অপেক্ষা করুন…', 'Working…') : tr('আপলোড ও লিংক নিন', 'Upload & get link')}
+      calcLabel={tr('আপলোড ও লিংক নিন', 'Upload & get link')}
+      busy={busy}
+      busyLabel={stage || tr('অপেক্ষা করুন…', 'Working…')}
       hasResult={!!item?.on}
       onShare={() => shareText && shareWA(shareText)}
       history={history}
       onClear={() => onClear?.('driveshare')}
       historyLabel={tr('ইতিহাস', 'History')}
       clearLabel={tr('মুছুন', 'Clear')}
+      renderHistoryItem={(raw) => {
+        const h = decodeEntry(raw);
+        if (!h) return <span style={{ fontSize: 13, color: 'var(--text2)' }}>{raw}</span>; // legacy plain-text entry
+        return (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', wordBreak: 'break-all' }}>{h.n}</div>
+              <div style={{ fontSize: 11, color: 'var(--text3)' }}>{formatSize(h.s)} · {timeAgo(h.t, bn)}</div>
+            </div>
+            <button type="button" onClick={() => copy(`h-${h.t}`, h.dl)} title={tr('লিংক কপি করুন', 'Copy link')}
+              style={{ flexShrink: 0, minWidth: 36, minHeight: 36, borderRadius: 9, border: '1px solid var(--border2)',
+                background: copied === `h-${h.t}` ? 'var(--wa-bg)' : 'var(--surface)', color: copied === `h-${h.t}` ? 'var(--wa-fg)' : 'var(--text2)',
+                cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              {copied === `h-${h.t}` ? <FaCheckCircle size={13} aria-hidden /> : <FaCopy size={13} aria-hidden />}
+            </button>
+          </div>
+        );
+      }}
     >
       {/* How it works */}
       <div style={{ background: `${A}12`, border: `1px solid ${A}35`, borderRadius: 12, padding: '10px 14px', marginBottom: 14, display: 'flex', alignItems: 'flex-start', gap: 10 }}>
@@ -255,10 +322,12 @@ export default function DriveShareCalc({ history, onAdd, onClear }: CalcProps) {
             onDragOver={e => { e.preventDefault(); setDrag(true); }}
             onDragLeave={() => setDrag(false)}
             onDrop={e => { e.preventDefault(); setDrag(false); takeFile(e.dataTransfer.files?.[0] || null); }}
+            aria-disabled={busy}
             style={{
               border: `2px dashed ${file || drag ? A : 'var(--border2)'}`, borderRadius: 16,
-              padding: '26px 16px', textAlign: 'center', cursor: 'pointer',
+              padding: '26px 16px', textAlign: 'center', cursor: busy ? 'not-allowed' : 'pointer',
               background: file || drag ? `${A}0d` : 'var(--surface)', marginBottom: 14, transition: 'all 0.15s',
+              opacity: busy ? 0.55 : 1, pointerEvents: busy ? 'none' : 'auto',
             }}
           >
             {file ? (
@@ -278,6 +347,35 @@ export default function DriveShareCalc({ history, onAdd, onClear }: CalcProps) {
               </>
             )}
           </div>
+
+          {dupe && !forceNew && (
+            <div role="alert" style={{ ...card, borderColor: 'var(--warning)', display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+              <FaExclamationTriangle size={15} color="var(--warning)" style={{ flexShrink: 0, marginTop: 2 }} aria-hidden />
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', marginBottom: 3 }}>
+                  {tr('এই ফাইলটা আগেও শেয়ার করা হয়েছিল', 'You already shared this exact file')}
+                </div>
+                <div style={{ fontSize: 12, color: 'var(--text2)', marginBottom: 10, lineHeight: 1.5 }}>
+                  {tr(`একই নাম ও সাইজের ফাইল ${timeAgo(dupe.t, bn)} শেয়ার করা হয়েছিল। আগের লিংকটা হয়তো এখনো কাজ করছে — আবার আপলোড করলে Drive-এ দুইটা কপি জমা হবে।`,
+                      `A file with the same name and size was shared ${timeAgo(dupe.t, bn)}. The earlier link may still work — uploading again will leave two copies in your Drive.`)}
+                </div>
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  <button type="button" onClick={() => copy('dupe', dupe.dl)} style={{
+                    minHeight: 38, padding: '0 12px', borderRadius: 9, cursor: 'pointer', fontFamily: 'inherit', fontWeight: 700, fontSize: 12.5,
+                    background: copied === 'dupe' ? 'var(--wa-bg)' : A, color: copied === 'dupe' ? 'var(--wa-fg)' : onAccent(A),
+                    border: 'none', display: 'flex', alignItems: 'center', gap: 6 }}>
+                    {copied === 'dupe' ? <FaCheckCircle size={12} aria-hidden /> : <FaCopy size={12} aria-hidden />}
+                    {copied === 'dupe' ? tr('কপি হয়েছে', 'Copied') : tr('আগের লিংক কপি করুন', 'Copy the earlier link')}
+                  </button>
+                  <button type="button" onClick={() => setForceNew(true)} style={{
+                    minHeight: 38, padding: '0 12px', borderRadius: 9, cursor: 'pointer', fontFamily: 'inherit', fontWeight: 700, fontSize: 12.5,
+                    background: 'var(--surface)', color: 'var(--text)', border: '1.5px solid var(--border2)' }}>
+                    {tr('তবুও নতুন করে আপলোড করুন', 'Upload as a new copy anyway')}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </>
       ) : (
         <>
