@@ -1,0 +1,50 @@
+{
+  "name": "Final Settlement",
+  "short_name": "Settlement",
+  "description": "Calculate final settlement, dues and deductions on separation. By SK BD Technology.",
+  "start_url": "/calculator/?app=finalsettlement",
+  "scope": "/calculator/",
+  "id": "/calculator/?app=finalsettlement",
+  "display": "standalone",
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
+  "background_color": "#071615",
+  "theme_color": "#0d9488",
+  "orientation": "portrait-primary",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": [
+    "utilities",
+    "business",
+    "productivity"
+  ],
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "/calculator/icons/apps/finalsettlement-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/calculator/icons/apps/finalsettlement-192-maskable.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/calculator/icons/apps/finalsettlement-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/calculator/icons/apps/finalsettlement-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
