@@ -14,10 +14,15 @@ export default defineConfig({
           '**/*.{js,css,html,ico,png,svg,jpg,jpeg,webp,woff,woff2,ttf}'
         ],
 
-        navigateFallback: '/hrsolutions/index.html',
+        // Was '/hrsolutions/index.html' — a leftover from an earlier
+        // project/folder name. The site actually deploys under
+        // /calculator/ (see package.json "homepage" and public/manifest*
+        // start_url/scope), so the old path never matched and offline
+        // SPA-routing fallback silently did nothing.
+        navigateFallback: '/calculator/index.html',
 
         navigateFallbackDenylist: [
-          /^\/hrsolutions\/api\//
+          /^\/calculator\/api\//
         ],
 
         cleanupOutdatedCaches: true,

@@ -1,0 +1,50 @@
+{
+  "name": "Share File",
+  "short_name": "Share File",
+  "description": "Upload a file to your own Google Drive and share a download link. By SK BD Technology.",
+  "start_url": "/calculator/?app=driveshare",
+  "scope": "/calculator/",
+  "id": "/calculator/?app=driveshare",
+  "display": "standalone",
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
+  "background_color": "#051a20",
+  "theme_color": "#0ea5e9",
+  "orientation": "portrait-primary",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": [
+    "utilities",
+    "business",
+    "productivity"
+  ],
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "/calculator/icons/apps/driveshare-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/calculator/icons/apps/driveshare-192-maskable.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/calculator/icons/apps/driveshare-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/calculator/icons/apps/driveshare-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

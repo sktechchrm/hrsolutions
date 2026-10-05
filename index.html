@@ -28,8 +28,10 @@
     <link rel="apple-touch-icon" sizes="192x192" href="./icons/icon-192.png" />
     <link rel="apple-touch-icon" sizes="512x512" href="./icons/icon-512.png" />
 
-    <!-- PWA Manifest -->
-    <!-- <link rel="manifest" href="./manifest.json" /> -->
+    <!-- PWA Manifest. App.tsx swaps this href to manifest-<id>.json when
+         the page is loaded as a single-app build (?app=maternity etc.),
+         so "Add to Home screen" picks up that app's name/icon too. -->
+    <link rel="manifest" href="./manifest.json" />
 
     <title>HR Solutions</title>
 

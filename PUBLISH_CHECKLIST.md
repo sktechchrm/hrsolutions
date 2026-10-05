@@ -1,61 +1,54 @@
 # Google Play Publish Checklist — HR Smart Solutions
 
-## Before Every Build
+A short checklist to run through before every Play Store release. For the
+full step-by-step build process, see `PLAY_STORE_GUIDE.md` (combined app)
+or `PLAY_STORE_5_APPS.md` (5 separate apps) — this file assumes you've
+already built an `.aab` using one of those.
 
-### 1. Set up local.properties (one-time)
-Copy `android/local.properties.example` to `android/local.properties` and fill in:
-```
-sdk.dir=/path/to/your/Android/sdk
-KEY_STORE_FILE=android.keystore
-KEY_STORE_PASSWORD=<your-password>
-KEY_ALIAS=android
-KEY_PASSWORD=<your-password>
-```
-⚠️ NEVER commit local.properties to git. It is in .gitignore.
+## Before every build
 
-### 2. Keep your keystore safe
-- File: `android.keystore` (in .gitignore)
-- Back it up to a USB drive or cloud storage
-- If lost, you can NEVER update the app on Play Store
+- [ ] Website deployed and live (`npm run build && npm run deploy`) —
+      Bubblewrap builds from the live manifest, not local files
+- [ ] `public/.well-known/assetlinks.json` has the correct SHA256
+      fingerprint for the keystore you're signing with
+- [ ] Tested the signed APK on a real phone — opens full-screen, no
+      browser address bar, Share File's Google sign-in works
 
-### 3. Build for release
-```bash
-# Step 1: Build the web app
-npm run build
+## Keystore safety
 
-# Step 2: Sync to Android
-npx cap sync android
+- [ ] Keystore file backed up somewhere other than this computer (cloud
+      storage, USB drive) — **if lost, you can never update this app
+      again on Play Store**
+- [ ] Keystore password stored in a password manager, not in a text file
+      sitting next to the keystore
 
-# Step 3: Open in Android Studio and generate signed APK/AAB
-npx cap open android
-# In Android Studio: Build > Generate Signed Bundle / APK
-# Choose AAB (Android App Bundle) for Play Store
-```
+## Play Console — per app
 
-## Play Store Submission Checklist
-
-### App details (in Play Console)
-- [ ] App name: HR Smart Solutions
-- [ ] Short description (80 chars max)
-- [ ] Full description (4000 chars max) — mention 13 calculators, bilingual
-- [ ] Privacy policy URL: https://sktechchrm.github.io/calculator/privacy-policy.html
-- [ ] App category: Tools
-- [ ] Content rating: Everyone
-
-### Graphics required
-- [ ] App icon: 512×512 PNG (no alpha)
+- [ ] App name matches the manifest's `name` field
+- [ ] Short description (80 chars max) — describes what this specific app
+      actually does, not a generic/stale feature list
+- [ ] Full description (4000 chars max)
+- [ ] Privacy policy URL: `https://sktechchrm.github.io/calculator/privacy-policy.html`
+- [ ] App category: Tools or Business
+- [ ] Content rating questionnaire completed → Everyone
+- [ ] Data safety form completed — **differs per app**, see the table in
+      `PLAY_STORE_5_APPS.md`
+- [ ] App icon: 512×512 PNG, no alpha channel
 - [ ] Feature graphic: 1024×500 PNG
-- [ ] Screenshots: minimum 2, recommended 4-8
-  - Phone screenshots: 1080×1920 or similar
-  - Current available: home.png, calc.png
-  - Still needed: BMI, VAT, size chart, unit converter
+- [ ] Screenshots: at least 2, ideally 4–8, taken from the actual current
+      app (not placeholders)
 
-### Build info
-- Package ID: com.ssumir.calculator
-- Version: 1.0.0 (versionCode 1)
-- Min Android: 7.0 (API 24)
-- Target Android: 14 (API 35)
+## Build info (combined app)
 
-## After Publishing
-- versionCode must increase by 1 with every update (1 → 2 → 3...)
-- versionName is for display only (1.0.0 → 1.0.1 → 1.1.0...)
+- Package ID: `com.sktechchrm.calculator`
+- Min Android: 7.0 (API 24) · Target: latest required by Play Console at submission time
+
+(5 separate apps use the package IDs listed in `PLAY_STORE_5_APPS.md`.)
+
+## After publishing
+
+- `versionCode` must increase by 1 with every update (1 → 2 → 3…) — set
+  this in `twa-manifest.json` before running `bubblewrap build` again
+- `versionName` is just the display string (1.0.0 → 1.0.1 → 1.1.0…)
+- Web-only changes (bug fixes, UI tweaks) don't need a new Play Store
+  release at all — just redeploy the website

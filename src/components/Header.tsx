@@ -5,14 +5,17 @@ import { useTheme } from '../context/ThemeContext.tsx';
 import { onAccent } from '../utils/color.ts';
 
 interface Props {
-  onBack:  () => void;
-  title:   string;
-  accent:  string;
-  icon?:   React.ComponentType<{ size?: number; color?: string }>;
-  info?:   string;
+  onBack:    () => void;
+  title:     string;
+  accent:    string;
+  icon?:     React.ComponentType<{ size?: number; color?: string }>;
+  info?:     string;
+  /** Hide the back arrow — used in single-app Play Store builds where
+   * this screen has nowhere to go "back" to (no Home grid exists). */
+  showBack?: boolean;
 }
 
-export default function Header({ onBack, title, accent, icon: Icon, info }: Props) {
+export default function Header({ onBack, title, accent, icon: Icon, info, showBack = true }: Props) {
   const { toggle, lang } = useLang();
   const { isDark, toggleTheme } = useTheme();
   const [tooltip, setTooltip] = useState(false);
@@ -63,15 +66,17 @@ export default function Header({ onBack, title, accent, icon: Icon, info }: Prop
     }}>
 
       {/* Back button */}
-      <button
-        onClick={onBack}
-        aria-label={backLabel}
-        style={{ ...btnBase, color: accent, borderRadius: 11, width: 36, height: 36, minWidth: 36 }}
-        onTouchStart={e => (e.currentTarget.style.background = 'var(--surface2)')}
-        onTouchEnd={e => { e.currentTarget.style.background = 'var(--surface)'; }}
-      >
-        <FaArrowLeft size={13} />
-      </button>
+      {showBack && (
+        <button
+          onClick={onBack}
+          aria-label={backLabel}
+          style={{ ...btnBase, color: accent, borderRadius: 11, width: 36, height: 36, minWidth: 36 }}
+          onTouchStart={e => (e.currentTarget.style.background = 'var(--surface2)')}
+          onTouchEnd={e => { e.currentTarget.style.background = 'var(--surface)'; }}
+        >
+          <FaArrowLeft size={13} />
+        </button>
+      )}
 
       {/* Calculator icon */}
       {Icon && (

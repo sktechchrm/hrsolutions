@@ -5,11 +5,13 @@ import { accentInk } from '../utils/color.ts';
 
 /**
  * Bottom navigation.
- * Only 3 destinations now: Home (the app grid — where all 4 active
+ * In the combined app, 3 destinations: Home (the app grid where all 4
  * calculators live), Video Call, and Support. Calculators are opened
  * from the Home grid, not cycled through a hidden tab group — with
  * only 4 of them, a grid is clearer and fully keyboard/screen-reader
- * navigable than a "tap again to cycle" pattern.
+ * navigable than a "tap again to cycle" pattern. A single-app Play
+ * Store build (see App.tsx SINGLE_APP) passes `tabs={['support']}`
+ * instead, since Home/Call belong only to the combined app.
  */
 interface Tab {
   id: 'home' | 'call' | 'support';
@@ -28,12 +30,18 @@ interface Props {
   activeId: string | null;
   onOpen: (id: string) => void;
   onShowHome: () => void;
+  /** Which tabs to show, in order. Defaults to all three. A single-app
+   * Play Store build passes just ['support'] — Home and Call are part of
+   * the combined app's navigation and don't belong in a standalone
+   * install of e.g. just Maternity Benefit. */
+  tabs?: Array<'home' | 'call' | 'support'>;
 }
 
-export default function BottomNav({ activeId, onOpen, onShowHome }: Props) {
+export default function BottomNav({ activeId, onOpen, onShowHome, tabs }: Props) {
   const { lang } = useLang();
   const { isDark } = useTheme();
   const isHome = !activeId;
+  const visibleTabs = tabs ? TABS.filter(t => tabs.includes(t.id)) : TABS;
 
   const handleTap = (tab: Tab) => {
     if (tab.id === 'home') { onShowHome(); return; }
@@ -53,7 +61,7 @@ export default function BottomNav({ activeId, onOpen, onShowHome }: Props) {
       }}
     >
       <div style={{ display: 'flex', height: 58, maxWidth: 720, margin: '0 auto', width: '100%' }}>
-        {TABS.map(tab => {
+        {visibleTabs.map(tab => {
           const isActive = tab.id === 'home' ? isHome : activeId === tab.id;
           const Icon = tab.icon;
           const tint = tab.color.startsWith('#') ? accentInk(tab.color, isDark) : tab.color;

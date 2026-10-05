@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import {
   FaBaby, FaFileContract, FaVideo, FaGoogleDrive, FaIndustry,
   FaQuestionCircle,
@@ -59,15 +59,60 @@ const APP_INFO: Record<string, { en: string; bn: string }> = {
   support:  { en: '', bn: '' },
 };
 
+/**
+ * Single-app mode.
+ *
+ * The site can be loaded two ways:
+ *  - https://…/calculator/            → the combined "HR Smart Solutions"
+ *    app: Home grid with all 5 tools, as before.
+ *  - https://…/calculator/?app=maternity (or finalsettlement / wagesgrid /
+ *    driveshare / call) → opens directly into that ONE tool, with no Home
+ *    grid and no way to browse into the other four. This is what each of
+ *    the 5 separate Play Store listings points its TWA at (see the
+ *    matching public/manifest-<id>.json and PLAY_STORE_5_APPS.md), so
+ *    someone who installed "Maternity Benefit" only ever sees Maternity
+ *    Benefit — not a grid with four unrelated tools sitting next to it.
+ *
+ * Read once at module load: the query string doesn't change during the
+ * session (there's no in-app link that would add/remove ?app=), so a
+ * plain constant is enough — no need to re-parse on every render or wire
+ * up routing for what is, in effect, a fixed launch mode per install.
+ */
+const SINGLE_APP_IDS = ['maternity', 'finalsettlement', 'wagesgrid', 'driveshare', 'call'];
+function getSingleAppId(): string | null {
+  if (typeof window === 'undefined') return null;
+  const requested = new URLSearchParams(window.location.search).get('app');
+  return requested && SINGLE_APP_IDS.includes(requested) ? requested : null;
+}
+const SINGLE_APP = getSingleAppId();
+
 function AppInner() {
-  const [activeId, setActiveId] = useState<string | null>(null);
+  const [activeId, setActiveId] = useState<string | null>(SINGLE_APP);
   const { history, add, clear } = useHistory();
   const { lang } = useLang();
   const { isDark } = useTheme();
 
-  const handleBack  = useCallback(() => setActiveId(null), []);
+  // Point the installable manifest at the matching single-app one, so
+  // someone who opens this URL straight in a mobile browser (not via the
+  // Play Store) and taps "Add to Home screen" still gets the right name
+  // and icon rather than the combined app's.
+  useEffect(() => {
+    if (!SINGLE_APP) return;
+    const link = document.querySelector<HTMLLinkElement>('link[rel="manifest"]');
+    if (link) link.href = `./manifest-${SINGLE_APP}.json`;
+  }, []);
+
+  // In single-app mode there's no Home grid to return to, so "back" goes
+  // to this app's own screen instead of null — and the Header hides its
+  // back arrow entirely once you're already there (nowhere further to go).
+  const handleBack  = useCallback(() => setActiveId(SINGLE_APP), []);
   const handleOpen  = useCallback((id: string) => setActiveId(id), []);
-  const handleHome  = useCallback(() => setActiveId(null), []);
+  const handleHome  = useCallback(() => setActiveId(SINGLE_APP), []);
+  const showBack    = activeId !== null && (!SINGLE_APP || activeId !== SINGLE_APP);
+  // Full app: Home / Call / Support. Single-app install: just Support —
+  // Home and Call belong to the combined app's navigation, not this one.
+  const navTabs = useMemo<Array<'home' | 'call' | 'support'>>(
+    () => (SINGLE_APP ? ['support'] : ['home', 'call', 'support']), []);
 
   const activeApp   = activeId ? APPS.find(a => a.id === activeId) : null;
   const Screen      = activeId && activeId !== 'support' && activeId !== 'call' ? SCREENS[activeId] : null;
@@ -97,6 +142,7 @@ function AppInner() {
             {/* Header gets info= so it renders the ⓘ tooltip */}
             <Header
               onBack={handleBack}
+              showBack={showBack}
               title={activeLabel}
               accent={activeColor}
               icon={ActiveIcon ?? undefined}
@@ -127,6 +173,7 @@ function AppInner() {
         activeId={activeId}
         onOpen={handleOpen}
         onShowHome={handleHome}
+        tabs={navTabs}
       />
     </div>
   );

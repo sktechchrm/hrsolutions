@@ -1,5 +1,5 @@
 {
-  "name": "mario-calculator",
+  "name": "hr-smart-solutions",
   "homepage": "https://sktechchrm.github.io/calculator",
   "private": true,
   "version": "1.0.1",
@@ -13,9 +13,6 @@
     "deploy": "gh-pages -d dist --dotfiles"
   },
   "dependencies": {
-    "@capacitor/android": "^8.3.4",
-    "@capacitor/cli": "^8.3.4",
-    "@capacitor/core": "^8.3.4",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "react-icons": "^5.6.0"

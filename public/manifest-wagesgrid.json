@@ -1,0 +1,50 @@
+{
+  "name": "Wages Grid",
+  "short_name": "Wages Grid",
+  "description": "Calculate performance-based wage increment using the wages grid. By SK BD Technology.",
+  "start_url": "/calculator/?app=wagesgrid",
+  "scope": "/calculator/",
+  "id": "/calculator/?app=wagesgrid",
+  "display": "standalone",
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
+  "background_color": "#1c0f04",
+  "theme_color": "#b45309",
+  "orientation": "portrait-primary",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": [
+    "utilities",
+    "business",
+    "productivity"
+  ],
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "/calculator/icons/apps/wagesgrid-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/calculator/icons/apps/wagesgrid-192-maskable.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/calculator/icons/apps/wagesgrid-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/calculator/icons/apps/wagesgrid-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
