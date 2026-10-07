@@ -32,6 +32,15 @@
          the page is loaded as a single-app build (?app=maternity etc.),
          so "Add to Home screen" picks up that app's name/icon too. -->
     <link rel="manifest" href="./manifest.json" />
+    <script>
+      (function () {
+        var app = new URLSearchParams(location.search).get('app');
+        var ids = ['maternity','finalsettlement','wagesgrid','driveshare','call'];
+        if (app && ids.indexOf(app) !== -1) {
+          document.querySelector('link[rel="manifest"]').href = './manifest-' + app + '.json';
+        }
+      })();
+    </script>
 
     <title>HR Solutions</title>
 
