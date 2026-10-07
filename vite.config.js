@@ -17,12 +17,13 @@ export default defineConfig({
         // The site deploys to https://sktechchrm.github.io/hrsolutions/
         // so the SPA fallback must point at that path, matching `base`
         // below and the start_url/scope in public/manifest*.json.
-        navigateFallback: '/hrsolutions/index.html',
+navigateFallback: '/hrsolutions/index.html',
 
-      navigateFallbackDenylist: [
-        /^\/hrsolutions\/api\//,
-        /\/relay\.html$/
-      ],
+navigateFallbackDenylist: [
+  /^\/hrsolutions\/api\//,
+  /\.html$/,      // relay.html, privacy.html, privacy-policy.html
+  /\.json$/,      // all manifest-*.json files
+],
 
         cleanupOutdatedCaches: true,
       },
