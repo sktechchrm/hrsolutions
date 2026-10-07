@@ -4,6 +4,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>Relay — Direct Call</title>
+<link rel="manifest" href="./manifest-call.json" />
+<meta name="theme-color" content="#0a0e13" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -355,6 +357,8 @@
   let localStream = null;
   let micOn = true, camOn = true;
   let timerInterval = null, callSeconds = 0;
+  let dropTimer = null;         // grace period before treating "disconnected" as a real hang-up
+  const DROP_GRACE_MS = 8000;
   const ICE_SERVERS = [
     { urls: 'stun:stun.l.google.com:19302' },
     { urls: 'stun:global.stun.twilio.com:3478' },
@@ -432,8 +436,13 @@
       if (!box.dataset.rendered){
         box.innerHTML = '';
         if (typeof QRCode !== 'undefined'){
-          new QRCode(box, { text: buildLink(kind === 'offer' ? 'o' : 'a', code), width: 168, height: 168, correctLevel: QRCode.CorrectLevel.L });
-          box.dataset.rendered = '1';
+          try{
+            new QRCode(box, { text: buildLink(kind === 'offer' ? 'o' : 'a', code), width: 168, height: 168, correctLevel: QRCode.CorrectLevel.L });
+            box.dataset.rendered = '1';
+          }catch(e){
+            // Video call links can be longer than a QR code can hold.
+            box.innerHTML = '<div style="color:#333;font-size:12px;padding:8px;text-align:center">This link is too long for a QR code. Use Share or copy the link instead.</div>';
+          }
         } else {
           box.innerHTML = '<div style="color:#333;font-size:12px;padding:8px">QR code unavailable right now.</div>';
         }
@@ -503,8 +512,17 @@
       if (mode === 'video') remote.classList.remove('hidden');
     };
     p.onconnectionstatechange = () => {
-      if (p.connectionState === 'connected') onConnected();
-      else if (['failed','disconnected','closed'].includes(p.connectionState)) onDisconnected(p.connectionState);
+      // Any new state cancels a pending "disconnected" timer.
+      clearTimeout(dropTimer); dropTimer = null;
+
+      if (p.connectionState === 'connected'){
+        onConnected();
+      } else if (p.connectionState === 'disconnected'){
+        // Often a brief network blip that recovers by itself: wait before ending the call.
+        dropTimer = setTimeout(() => onDisconnected('disconnected'), DROP_GRACE_MS);
+      } else if (['failed','closed'].includes(p.connectionState)){
+        onDisconnected(p.connectionState);
+      }
     };
     return p;
   }
@@ -662,6 +680,7 @@
   };
 
   window.endCall = function(){
+    clearTimeout(dropTimer); dropTimer = null;
     if (pc){ pc.close(); pc = null; }
     if (localStream){ localStream.getTracks().forEach(t => t.stop()); localStream = null; }
     clearInterval(timerInterval); timerInterval = null; callSeconds = 0;
@@ -669,6 +688,10 @@
   };
 
   function resetToHome(){
+    clearTimeout(dropTimer); dropTimer = null;
+    if (pc){ pc.close(); pc = null; }
+    if (localStream){ localStream.getTracks().forEach(t => t.stop()); localStream = null; }
+    micOn = true; camOn = true; callSeconds = 0;
     $('callScreen').classList.add('hidden');
     $('topbar').classList.remove('hidden');
     $('homeScreen').classList.remove('hidden');
@@ -689,8 +712,8 @@
     $('calleeFlow').classList.add('hidden');
     $('offerCode').value = ''; $('answerInput').value = ''; $('answerCode').value = ''; $('offerInput').value = '';
     $('answerInput').classList.add('hidden'); $('connectBtn').classList.add('hidden');
-    $('offerQR').classList.add('hidden'); $('offerQR').dataset.rendered = '';
-    $('answerQR').classList.add('hidden'); $('answerQR').dataset.rendered = '';
+    $('offerQR').classList.add('hidden'); $('offerQR').dataset.rendered = ''; $('offerQR').innerHTML = '';
+    $('answerQR').classList.add('hidden'); $('answerQR').dataset.rendered = ''; $('answerQR').innerHTML = '';
     $('connectBtn').disabled = true; $('joinBtn').disabled = true;
     $('joinBanner').classList.add('hidden');
     role = null;
