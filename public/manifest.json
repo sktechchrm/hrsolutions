@@ -2,8 +2,8 @@
   "name": "HR Smart Solutions",
   "short_name": "HR Solutions",
   "description": "Maternity benefit, final settlement, wages grid and file sharing in Bangla and English. Made by Saiful Islam (SK BD Technology).",
-  "start_url": "/calculator/",
-  "scope": "/calculator/",
+  "start_url": "/hrsolutions/",
+  "scope": "/hrsolutions/",
   "display": "standalone",
   "display_override": [
     "standalone",
@@ -23,25 +23,25 @@
   "prefer_related_applications": false,
   "icons": [
     {
-      "src": "/calculator/icons/icon-192.png",
+      "src": "/hrsolutions/icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/calculator/icons/icon-192.png",
+      "src": "/hrsolutions/icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "/calculator/icons/icon-512.png",
+      "src": "/hrsolutions/icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/calculator/icons/icon-512.png",
+      "src": "/hrsolutions/icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
@@ -49,14 +49,14 @@
   ],
   "screenshots": [
     {
-      "src": "/calculator/screenshots/home.png",
+      "src": "/hrsolutions/screenshots/home.png",
       "sizes": "390x844",
       "type": "image/png",
       "form_factor": "narrow",
       "label": "Home Screen"
     },
     {
-      "src": "/calculator/screenshots/calc.png",
+      "src": "/hrsolutions/screenshots/calc.png",
       "sizes": "390x844",
       "type": "image/png",
       "form_factor": "narrow",
@@ -70,7 +70,7 @@
       "url": "/calculator/",
       "icons": [
         {
-          "src": "/calculator/icons/icon-192.png",
+          "src": "/hrsolutions/icons/icon-192.png",
           "sizes": "192x192"
         }
       ]
@@ -81,7 +81,7 @@
       "url": "/calculator/",
       "icons": [
         {
-          "src": "/calculator/icons/icon-192.png",
+          "src": "/hrsolutions/icons/icon-192.png",
           "sizes": "192x192"
         }
       ]

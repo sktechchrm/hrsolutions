@@ -14,16 +14,15 @@ export default defineConfig({
           '**/*.{js,css,html,ico,png,svg,jpg,jpeg,webp,woff,woff2,ttf}'
         ],
 
-        // Was '/hrsolutions/index.html' — a leftover from an earlier
-        // project/folder name. The site actually deploys under
-        // /calculator/ (see package.json "homepage" and public/manifest*
-        // start_url/scope), so the old path never matched and offline
-        // SPA-routing fallback silently did nothing.
-        navigateFallback: '/calculator/index.html',
+        // The site deploys to https://sktechchrm.github.io/hrsolutions/
+        // so the SPA fallback must point at that path, matching `base`
+        // below and the start_url/scope in public/manifest*.json.
+        navigateFallback: '/hrsolutions/index.html',
 
-        navigateFallbackDenylist: [
-          /^\/calculator\/api\//
-        ],
+      navigateFallbackDenylist: [
+        /^\/hrsolutions\/api\//,
+        /\/relay\.html$/
+      ],
 
         cleanupOutdatedCaches: true,
       },
@@ -32,7 +31,7 @@ export default defineConfig({
     }),
   ],
 
-  base: './',
+  base: '/hrsolutions/',
 
   publicDir: 'public',
 
