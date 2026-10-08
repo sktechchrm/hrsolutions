@@ -15,7 +15,7 @@
     "target": {
       "namespace": "android_app",
       "package_name": "com.sktechchrm.maternity",
-      "sha256_cert_fingerprints": ["PASTE_MATERNITY_FINGERPRINT"]
+      "sha256_cert_fingerprints": ["2C:6C:9F:9C:73:1F:F3:99:9C:1F:68:87:16:D3:D8:21:D5:07:2F:ED:12:59:91:0C:2C:69:B1:A8:9C:53:AA:14"]
     }
   },
   {

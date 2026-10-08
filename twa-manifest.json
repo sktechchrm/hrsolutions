@@ -1,5 +1,5 @@
 {
-  "packageId": "com.sktechchrm.calculator",
+  "packageId": "com.sktechchrm.hrsolutions",
   "host": "sktechchrm.github.io",
   "name": "HR Smart Solutions",
   "launcherName": "HR Solutions",
@@ -12,9 +12,9 @@
   "navigationDividerColorDark": "#000000",
   "backgroundColor": "#F0F4FF",
   "enableNotifications": true,
-  "startUrl": "/calculator/",
-  "iconUrl": "https://sktechchrm.github.io/calculator/icons/icon-512.png",
-  "maskableIconUrl": "https://sktechchrm.github.io/calculator/icons/icon-512.png",
+  "startUrl": "/hrsolutions/",
+  "iconUrl": "https://sktechchrm.github.io/hrsolutions/icons/icon-512.png",
+  "maskableIconUrl": "https://sktechchrm.github.io/hrsolutions/icons/icon-512.png",
   "splashScreenFadeOutDuration": 300,
   "signingKey": {
     "path": "E:\\Android\\calculator-android\\android.keystore",
@@ -26,12 +26,12 @@
     {
       "name": "General Calculator",
       "shortName": "\u09b8\u09be\u09a7\u09be\u09b0\u09a3",
-      "url": "https://sktechchrm.github.io/calculator/",
-      "chosenIconUrl": "https://sktechchrm.github.io/calculator/icons/icon-192.png"
+      "url": "https://sktechchrm.github.io/hrsolutions/",
+      "chosenIconUrl": "https://sktechchrm.github.io/hrsolutions/icons/icon-192.png"
     }
   ],
   "generatorApp": "bubblewrap-cli",
-  "webManifestUrl": "https://sktechchrm.github.io/calculator/manifest.json",
+  "webManifestUrl": "https://sktechchrm.github.io/hrsolutions/manifest.json",
   "fallbackType": "customtabs",
   "features": {},
   "alphaDependencies": {
@@ -40,7 +40,7 @@
   "enableSiteSettingsShortcut": true,
   "isChromeOSOnly": false,
   "isMetaQuest": false,
-  "fullScopeUrl": "https://sktechchrm.github.io/calculator/",
+  "fullScopeUrl": "https://sktechchrm.github.io/hrsolutions/",
   "minSdkVersion": 21,
   "orientation": "portrait-primary",
   "fingerprints": [],
